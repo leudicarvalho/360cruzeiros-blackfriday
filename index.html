@@ -32,23 +32,35 @@
   .logo img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--ouro); object-fit: cover; }
   .logo span { font-weight: 800; font-size: 14px; color: var(--ouro); }
   .atualizado { color: var(--suave); font-size: 12px; text-align: right; }
-  .topo-grid { display: grid; grid-template-columns: 1fr; gap: 14px; text-align: center; }
+  /* Grade do topo: título | contador em cima, e as duas caixas (info | aviso) embaixo, com a mesma altura.
+     Celular: título, info, contador, aviso, um embaixo do outro. */
+  .topo-grid { display: grid; grid-template-columns: 1fr; grid-template-areas: "titulo" "info" "prazo" "aviso"; gap: 12px; text-align: center; }
+  .t-titulo { grid-area: titulo; }
+  .t-prazo { grid-area: prazo; }
+  .info { grid-area: info; }
+  .aviso { grid-area: aviso; }
   .selo { display: inline-block; background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro)); color: var(--fundo); font-weight: 900; letter-spacing: 2.5px; font-size: 12px; padding: 5px 12px; border-radius: 60px; }
-  h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 900; line-height: 1.1; letter-spacing: -.5px; margin: 8px 0 6px; }
+  h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 900; line-height: 1.1; letter-spacing: -.5px; margin-top: 8px; }
   h1 em { font-style: normal; color: var(--ouro); white-space: nowrap; }
-  .sub { color: rgba(255,255,255,.85); font-size: 14px; }
-  .sub b { color: #fff; }
   .prazo-rotulo { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--suave); }
   .contagem { display: flex; justify-content: center; gap: 8px; margin-top: 6px; }
   .contagem div { background: rgba(7,22,29,.7); border: 1px solid rgba(248,196,99,.35); border-radius: 10px; min-width: 58px; padding: 5px 6px; text-align: center; }
   .contagem b { display: block; font-size: 22px; font-weight: 900; line-height: 1.1; color: var(--ouro); }
   .contagem small { color: var(--suave); font-size: 10px; text-transform: uppercase; }
-  .aviso { margin-top: 10px; background: rgba(232,65,24,.16); border: 1px solid rgba(232,65,24,.6); border-radius: 12px; padding: 8px 12px; font-size: 13px; line-height: 1.35; color: #fff; text-align: left; display: flex; gap: 8px; align-items: flex-start; }
+  /* Duas caixas irmãs: info (ciano, com ✓) e aviso (vermelho, com !). */
+  .caixa { border-radius: 12px; padding: 10px 12px; font-size: 13px; line-height: 1.4; color: #fff; text-align: left; display: flex; gap: 10px; align-items: center; }
+  .caixa::before { flex: 0 0 22px; height: 22px; border-radius: 50%; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  .info { background: rgba(126,232,250,.10); border: 1px solid rgba(126,232,250,.5); }
+  .info b { color: var(--ciano); }
+  .info::before { content: '✓'; background: var(--ciano); color: var(--fundo); }
+  .aviso { background: rgba(232,65,24,.16); border: 1px solid rgba(232,65,24,.6); }
   .aviso b { color: #ff9b7d; }
-  .aviso::before { content: '!'; flex: 0 0 20px; height: 20px; border-radius: 50%; background: var(--alerta); color: #fff; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  .aviso::before { content: '!'; background: var(--alerta); color: #fff; }
   @media (min-width: 760px) {
-    .topo-grid { grid-template-columns: 1.25fr 1fr; gap: 28px; align-items: center; text-align: left; }
-    .prazo { text-align: center; }
+    .topo-grid { grid-template-columns: 1fr 1fr; grid-template-areas: "titulo prazo" "info aviso"; column-gap: 24px; row-gap: 14px; align-items: end; text-align: left; }
+    .caixa { align-self: stretch; }
+    .t-prazo { text-align: right; }
+    .contagem { justify-content: flex-end; }
   }
 
   .cabines { display: flex; justify-content: center; gap: 8px; margin: 16px 0 4px; }
@@ -139,16 +151,16 @@
       <p class="atualizado" id="atualizado">Carregando preços...</p>
     </div>
     <div class="topo-grid">
-      <div>
+      <div class="t-titulo">
         <span class="selo">BLACK NOVEMBER</span>
         <h1>Aqui o desconto <em>é de verdade</em></h1>
-        <p class="sub"><b>Cruzeiros MSC e Costa saindo de Santos.</b> Todo dia comparamos cada preço com o de 22 de outubro: se baixou, você vê aqui.</p>
       </div>
-      <div class="prazo">
+      <div class="t-prazo">
         <p class="prazo-rotulo">A Black November termina em</p>
         <div class="contagem" id="contagem"></div>
-        <p class="aviso"><span><b>Não deixe para o último dia:</b> as cabines mais baratas e as melhores datas costumam esgotar bem antes do fim da promoção.</span></p>
       </div>
+      <p class="caixa info"><span><b>Cruzeiros MSC e Costa saindo de Santos.</b> Todo dia comparamos cada preço com o de 22 de outubro: se baixou, você vê aqui.</span></p>
+      <p class="caixa aviso"><span><b>Não deixe para o último dia:</b> as cabines mais baratas e as melhores datas costumam esgotar bem antes do fim da promoção.</span></p>
     </div>
   </header>
 
