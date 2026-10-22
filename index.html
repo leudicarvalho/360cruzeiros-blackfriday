@@ -1,7 +1,7 @@
-<!-- Black Friday 360cruzeiros: bloco HTML para colar no Wix (Incorporar > Código HTML).
-     Os preços vêm de https://leudicarvalho.github.io/360cruzeiros-blackfriday/precos.json,
-     atualizado pela rotina. Não precisa recolar este bloco quando os preços mudam. -->
 <!doctype html>
+<!-- Página da Black Friday 360cruzeiros, publicada em https://leudicarvalho.github.io/360cruzeiros-blackfriday/
+     O Wix mostra este endereço num bloco "Incorporar um site": mudar esta página ou os preços (precos.json)
+     e dar push basta, sem mexer no Wix. -->
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
@@ -134,7 +134,7 @@
   function dataCurta(iso) { var p = iso.split('-'); return p[2] + ' ' + MESES[+p[1] - 1] + ' ' + p[0]; }
   function dataBr(iso) { var p = iso.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
   function hojeIso() { return new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); }
-  function roteiro(s) { return (s.soIda ? 'Só ida: ' : '') + s.roteiro; }
+  function roteiro(s) { return s.roteiro; }
   function linkWhats(texto) { return 'https://wa.me/' + WHATS + '?text=' + encodeURIComponent(texto); }
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
@@ -145,10 +145,11 @@
     $('contagem').innerHTML = '<div><b>' + d + '</b><small>dias</small></div><div><b>' + h + '</b><small>horas</small></div><div><b>' + m + '</b><small>min</small></div>';
   }
 
-  // Saídas que entram nas listas: futuras, ida e volta, de MSC ou Costa, com preço na cabine escolhida.
+  // Saídas que entram nas listas: futuras, de MSC ou Costa, com preço na cabine escolhida.
+  // O arquivo de preços já traz só as que começam e terminam em Santos.
   function validas() {
     var hoje = hojeIso();
-    return saidas.filter(function (s) { return s.data > hoje && !s.soIda && !s.tematico && s.atual[cabine]; });
+    return saidas.filter(function (s) { return s.data > hoje && !s.tematico && s.atual[cabine]; });
   }
 
   function card(s, pos, mostrarQueda) {
