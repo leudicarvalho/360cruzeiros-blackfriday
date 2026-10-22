@@ -68,7 +68,6 @@
   .dica { display: none; color: var(--suave); font-size: 12px; margin: -8px 0 10px; }
   section.pesquisa h2 em { color: var(--ouro); }
   section.pesquisa .form { margin: 0 auto; text-align: left; background: var(--card); }
-  section .card { background: var(--card); }
   section .card .data { color: var(--cor); }
 
   /* Celular: cartões em carrossel (arrasta para o lado), para a página não ficar comprida demais. */
@@ -83,16 +82,23 @@
   }
   @media (min-width: 960px) { .grade { grid-template-columns: repeat(5, 1fr); } }
 
-  .card { background: var(--card); border: 1px solid var(--linha); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 5px; position: relative; min-width: 0; }
-  .pos { position: absolute; top: 12px; right: 12px; color: var(--suave); font-weight: 800; font-size: 12px; }
-  .data { color: var(--ouro); font-weight: 700; font-size: 13px; padding-right: 26px; }
-  .noites { color: var(--texto); font-size: 12px; font-weight: 700; margin-top: -3px; }
-  .navio { font-weight: 800; font-size: 16px; }
-  .rota { color: var(--suave); font-size: 12px; min-height: 34px; }
+  /* Cartão em faixas, com a cor do bloco (--cor): topo tingido com a posição em destaque, linhas separando navio, preço e botões. */
+  .card { border: 1px solid color-mix(in srgb, var(--cor) 28%, var(--linha)); border-radius: 16px; display: flex; flex-direction: column; position: relative; min-width: 0; overflow: hidden;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--cor) 7%, #0f2a35) 0%, #0b2029 100%); }
+  .card > div { padding: 11px 14px; }
+  .c-topo { display: flex; align-items: center; gap: 9px; background: color-mix(in srgb, var(--cor) 16%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--cor) 30%, transparent); }
+  .pos { flex: 0 0 36px; height: 36px; border-radius: 50%; background: var(--cor); color: var(--fundo); font-weight: 900; font-size: 17px; letter-spacing: -1px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px color-mix(in srgb, var(--cor) 45%, transparent); }
+  .data { display: block; color: var(--cor); font-weight: 800; font-size: 14.5px; }
+  .noites { display: block; color: var(--suave); font-size: 12px; font-weight: 600; }
+  .c-navio { border-bottom: 1px dashed var(--linha); }
+  .navio { display: block; font-weight: 800; font-size: 16px; color: #fff; }
+  .rota { display: block; color: var(--suave); font-size: 12px; min-height: 32px; margin-top: 2px; }
+  .c-queda { display: flex; flex-direction: column; gap: 6px; border-bottom: 1px dashed var(--linha); }
   .antes { color: var(--suave); text-decoration: line-through; font-size: 12px; }
-  .preco { font-size: 22px; font-weight: 800; line-height: 1.15; }
-  .preco small { display: block; font-size: 11px; color: var(--suave); font-weight: 500; }
-  .pp { color: var(--suave); font-size: 12px; }
+  .c-preco { background: rgba(0,0,0,.18); }
+  .preco { display: block; font-size: 24px; font-weight: 900; line-height: 1.1; color: #fff; letter-spacing: -.5px; }
+  .pp { display: block; color: var(--suave); font-size: 11.5px; margin-top: 3px; }
+  .c-acoes { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-bottom: 14px !important; }
   .compara { color: var(--suave); font-size: 12px; background: var(--fundo); border-radius: 6px; padding: 6px 8px; }
   .tag.igual { background: rgba(161,161,170,.15); color: var(--suave); }
   .tag { align-self: flex-start; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: rgba(74,222,128,.15); color: var(--queda); }
@@ -225,11 +231,10 @@
   function reais(n) { return 'R$ ' + n.toLocaleString('pt-BR'); }
   function dataBr(iso) { var p = iso.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
   function volta(s) { var d = new Date(s.data + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + s.noites); return d.toISOString().slice(0, 10); }
-  // "09 fev → 12 fev 2027" (ano nas duas pontas só quando muda no meio, como no Réveillon)
+  // Curto: "09–12 fev"; mês diferente: "30 nov–03 dez". O ano vai na linha das noites.
   function periodo(s) {
-    var a = s.data.split('-'), b = volta(s).split('-');
-    var ida = a[2] + ' ' + MESES[+a[1] - 1] + (a[0] !== b[0] ? ' ' + a[0] : '');
-    return ida + ' → ' + b[2] + ' ' + MESES[+b[1] - 1] + ' ' + b[0];
+    var a = s.data.split('-'), b = volta(s).split('-'), fim = b[2] + ' ' + MESES[+b[1] - 1];
+    return a[1] === b[1] ? a[2] + '–' + fim : a[2] + ' ' + MESES[+a[1] - 1] + '–' + fim;
   }
   function hojeIso() { return new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); }
   function roteiro(s) { return s.roteiro; }
@@ -261,22 +266,23 @@
       'Cabine ' + NOME_CABINE[cabine] + ': ' + reais(atual) + ' para 2 pessoas';
     var alerta = '[BF-ALERTA] Olá! Quero ser avisado se este cruzeiro baixar de preço:\n' +
       s.navio + ', ' + dataBr(s.data) + ', ' + s.noites + ' noites, cabine ' + NOME_CABINE[cabine] + ' (hoje ' + reais(atual) + ' para 2 pessoas)';
+    // Cartão em faixas separadas: posição e data / navio e roteiro / (queda) / preço / botões.
     return '<div class="card">' +
-      '<span class="pos">#' + pos + '</span>' +
-      '<span class="data">' + periodo(s) + '</span>' +
-      '<span class="noites">' + s.noites + ' noites</span>' +
-      '<span class="navio">' + esc(s.navio) + '</span>' +
-      '<span class="rota">' + esc(roteiro(s)) + '</span>' +
+      '<div class="c-topo"><span class="pos">' + pos + 'º</span><div>' +
+        '<span class="data">' + periodo(s) + '</span>' +
+        '<span class="noites">' + s.data.slice(0, 4) + ' · ' + s.noites + ' noites</span></div></div>' +
+      '<div class="c-navio"><span class="navio">' + esc(s.navio) + '</span>' +
+        '<span class="rota">' + esc(roteiro(s)) + '</span></div>' +
       (mostrarQueda && antes ?
-        '<span class="compara">22/10: ' + reais(antes) + '<br>Hoje: ' + reais(atual) + '</span>' +
+        '<div class="c-queda"><span class="compara">22/10: ' + reais(antes) + '<br>Hoje: ' + reais(atual) + '</span>' +
         '<span class="tag' + (caiu ? '' : ' igual') + '">' + (caiu ? 'Baixou ' + pct(queda(s)) + ' (' + reais(antes - atual) + ')' :
-          atual === antes ? 'Baixou 0%: mesmo preço' : 'Subiu ' + pct(-queda(s))) + '</span>' :
-        (caiu ? '<span class="tag">Baixou ' + pct(queda(s)) + ' (' + reais(antes - atual) + ')</span><span class="antes">22/10: ' + reais(antes) + '</span>' : '')) +
-      '<span class="preco">' + reais(atual) + ' <small>2 pessoas</small></span>' +
-      '<span class="pp">' + reais(Math.round(atual / 2)) + ' por pessoa, taxas inclusas</span>' +
-      '<a class="btn" target="_blank" rel="noopener" href="' + linkWhats(texto) + '">Quero esse</a>' +
+          atual === antes ? 'Baixou 0%: mesmo preço' : 'Subiu ' + pct(-queda(s))) + '</span></div>' :
+        (caiu ? '<div class="c-queda"><span class="tag">Baixou ' + pct(queda(s)) + ' (' + reais(antes - atual) + ')</span><span class="antes">22/10: ' + reais(antes) + '</span></div>' : '')) +
+      '<div class="c-preco"><span class="preco">' + reais(atual) + '</span>' +
+        '<span class="pp">2 pessoas · ' + reais(Math.round(atual / 2)) + ' cada, taxas inclusas</span></div>' +
+      '<div class="c-acoes"><a class="btn" target="_blank" rel="noopener" href="' + linkWhats(texto) + '">Quero esse</a>' +
       (mostrarQueda ? '' : '<a class="aviso-link" target="_blank" rel="noopener" href="' + linkWhats(alerta) + '">Me avise se baixar</a>') +
-      '</div>';
+      '</div></div>';
   }
 
   function desenhar() {
