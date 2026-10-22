@@ -1,0 +1,252 @@
+<!-- Black Friday 360cruzeiros: bloco HTML para colar no Wix (Incorporar > Código HTML).
+     Os preços vêm de https://leudicarvalho.github.io/360cruzeiros-blackfriday/precos.json,
+     atualizado pela rotina. Não precisa recolar este bloco quando os preços mudam. -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fundo: #0b0b0d; --card: #17171b; --linha: #2a2a31; --texto: #f4f4f5; --suave: #a1a1aa;
+    --ouro: #f5c400; --verde: #25d366; --verde-escuro: #1da851; --queda: #4ade80; --alta: #f87171;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--fundo); color: var(--texto); font-family: Montserrat, Arial, sans-serif; line-height: 1.4; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 16px 48px; }
+  .topo { text-align: center; margin-bottom: 28px; }
+  .selo { display: inline-block; background: var(--ouro); color: #000; font-weight: 800; letter-spacing: 2px; font-size: 13px; padding: 6px 14px; border-radius: 4px; }
+  h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 800; margin: 14px 0 8px; }
+  h1 span { color: var(--ouro); }
+  .sub { color: var(--suave); font-size: 15px; max-width: 640px; margin: 0 auto; }
+  .contagem { display: flex; justify-content: center; gap: 10px; margin: 20px 0 6px; }
+  .contagem div { background: var(--card); border: 1px solid var(--linha); border-radius: 8px; min-width: 66px; padding: 8px 6px; }
+  .contagem b { display: block; font-size: 24px; color: var(--ouro); }
+  .contagem small { color: var(--suave); font-size: 11px; text-transform: uppercase; }
+  .atualizado { color: var(--suave); font-size: 12px; margin-top: 8px; }
+
+  .cabines { display: flex; justify-content: center; gap: 8px; margin: 22px 0 6px; flex-wrap: wrap; }
+  .cabines button { background: transparent; color: var(--texto); border: 1px solid var(--linha); border-radius: 999px; padding: 9px 18px; font: 700 14px Montserrat, Arial, sans-serif; cursor: pointer; }
+  .cabines button.ativo { background: var(--ouro); border-color: var(--ouro); color: #000; }
+
+  section { margin-top: 40px; }
+  h2 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .explica { color: var(--suave); font-size: 14px; margin-bottom: 16px; }
+  .grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--linha); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px; position: relative; }
+  .pos { position: absolute; top: 12px; right: 14px; color: var(--suave); font-weight: 800; font-size: 13px; }
+  .data { color: var(--ouro); font-weight: 700; font-size: 14px; }
+  .navio { font-weight: 800; font-size: 17px; }
+  .rota { color: var(--suave); font-size: 13px; min-height: 36px; }
+  .antes { color: var(--suave); text-decoration: line-through; font-size: 13px; }
+  .preco { font-size: 24px; font-weight: 800; }
+  .preco small { font-size: 12px; color: var(--suave); font-weight: 500; }
+  .pp { color: var(--suave); font-size: 12px; }
+  .tag { align-self: flex-start; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: rgba(74,222,128,.15); color: var(--queda); }
+  .btn { display: block; text-align: center; text-decoration: none; background: var(--verde); color: #fff; font-weight: 700; font-size: 14px; padding: 11px; border-radius: 8px; margin-top: auto; border: 0; cursor: pointer; font-family: inherit; width: 100%; }
+  .btn:hover { background: var(--verde-escuro); }
+  .aviso-link { text-align: center; color: var(--suave); font-size: 12px; text-decoration: underline; cursor: pointer; background: none; border: 0; font-family: inherit; }
+  .vazio { background: var(--card); border: 1px dashed var(--linha); border-radius: 12px; padding: 22px; color: var(--suave); text-align: center; }
+
+  .form { background: var(--card); border: 1px solid var(--linha); border-radius: 12px; padding: 20px; }
+  .abas { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .abas button { flex: 1; min-width: 180px; background: transparent; border: 1px solid var(--linha); color: var(--texto); padding: 11px; border-radius: 8px; font: 700 14px Montserrat, Arial, sans-serif; cursor: pointer; }
+  .abas button.ativo { border-color: var(--ouro); color: var(--ouro); }
+  .campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--suave); }
+  select, input { background: var(--fundo); color: var(--texto); border: 1px solid var(--linha); border-radius: 8px; padding: 11px; font: 500 15px Montserrat, Arial, sans-serif; width: 100%; color-scheme: dark; }
+  .oculto { display: none; }
+  .rodape { color: var(--suave); font-size: 12px; text-align: center; margin-top: 36px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topo">
+    <span class="selo">BLACK FRIDAY</span>
+    <h1>Cruzeiros saindo de <span>Santos</span></h1>
+    <p class="sub">Todo dia conferimos o preço de cada saída e comparamos com o preço de 22 de outubro. Aqui, desconto de Black Friday é de verdade.</p>
+    <div class="contagem" id="contagem"></div>
+    <p class="atualizado" id="atualizado">Carregando preços...</p>
+  </header>
+
+  <div class="cabines" id="cabines">
+    <button data-c="i" class="ativo">Interna</button>
+    <button data-c="e">Externa</button>
+    <button data-c="v">Varanda</button>
+  </div>
+
+  <section>
+    <h2>Os 10 menores preços de hoje</h2>
+    <p class="explica">Valor total para 2 adultos, com taxas, na cabine escolhida acima.</p>
+    <div class="grade" id="top10"></div>
+  </section>
+
+  <section>
+    <h2>As 5 saídas que mais baixaram</h2>
+    <p class="explica">Comparadas com o preço que registramos em 22/10.</p>
+    <div class="grade" id="quedas"></div>
+  </section>
+
+  <section>
+    <h2>Quer comparar outro cruzeiro?</h2>
+    <p class="explica">Conte o que você procura. A gente confere o preço e te responde no WhatsApp.</p>
+    <div class="form">
+      <div class="abas" id="abas">
+        <button data-a="sei" class="ativo">Já sei o cruzeiro</button>
+        <button data-a="sugestao">Quero sugestões</button>
+      </div>
+      <div class="campos" id="campos-sei">
+        <label>Navio<select id="f-navio"></select></label>
+        <label>Data de saída<select id="f-data"></select></label>
+      </div>
+      <div class="campos oculto" id="campos-sugestao">
+        <label>Posso viajar a partir de<input type="date" id="f-inicio"></label>
+        <label>Preciso voltar até<input type="date" id="f-fim"></label>
+      </div>
+      <div class="campos">
+        <label>Quantas pessoas<select id="f-pessoas">
+          <option>1</option><option selected>2</option><option>3</option><option>4</option><option>5 ou mais</option>
+        </select></label>
+        <label>Cabine<select id="f-cabine">
+          <option>Interna</option><option>Externa</option><option>Varanda</option><option>Ainda não sei</option>
+        </select></label>
+        <label>Seu nome<input type="text" id="f-nome" placeholder="Opcional"></label>
+      </div>
+      <button class="btn" id="f-enviar">Comparar pelo WhatsApp</button>
+    </div>
+  </section>
+
+  <p class="rodape">Preços do dia para 2 adultos, com taxas, na categoria mais em conta de cada tipo de cabine. Sujeitos a disponibilidade e confirmados no atendimento.<br>360cruzeiros</p>
+</div>
+
+<script>
+(function () {
+  var WHATS = '5582993258783';
+  var DADOS = 'https://leudicarvalho.github.io/360cruzeiros-blackfriday/precos.json';
+  var BLACK_FRIDAY = new Date('2026-11-27T00:00:00-03:00');
+  var NOME_CABINE = { i: 'Interna', e: 'Externa', v: 'Varanda' };
+  var MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+  var cabine = 'i', saidas = [];
+
+  function $(id) { return document.getElementById(id); }
+  function reais(n) { return 'R$ ' + n.toLocaleString('pt-BR'); }
+  function dataCurta(iso) { var p = iso.split('-'); return p[2] + ' ' + MESES[+p[1] - 1] + ' ' + p[0]; }
+  function dataBr(iso) { var p = iso.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+  function hojeIso() { return new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); }
+  function roteiro(s) { return (s.soIda ? 'Só ida até ' : '') + s.roteiro.replace(/^,\s*/, ''); }
+  function linkWhats(texto) { return 'https://wa.me/' + WHATS + '?text=' + encodeURIComponent(texto); }
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  function contagem() {
+    var falta = BLACK_FRIDAY - Date.now();
+    if (falta <= 0) { $('contagem').innerHTML = '<div><b>É hoje!</b><small>Black Friday</small></div>'; return; }
+    var d = Math.floor(falta / 864e5), h = Math.floor(falta / 36e5) % 24, m = Math.floor(falta / 6e4) % 60;
+    $('contagem').innerHTML = '<div><b>' + d + '</b><small>dias</small></div><div><b>' + h + '</b><small>horas</small></div><div><b>' + m + '</b><small>min</small></div>';
+  }
+
+  // Saídas que entram nas listas: futuras, ida e volta, de MSC ou Costa, com preço na cabine escolhida.
+  function validas() {
+    var hoje = hojeIso();
+    return saidas.filter(function (s) { return s.data > hoje && !s.soIda && !s.tematico && s.atual[cabine]; });
+  }
+
+  function card(s, pos, mostrarQueda) {
+    var atual = s.atual[cabine], antes = s.base && s.base[cabine], caiu = antes && atual < antes;
+    var texto = '[BF] Olá! Vi a página da Black Friday e quero esse cruzeiro:\n' +
+      s.navio + ', ' + dataBr(s.data) + ', ' + s.noites + ' noites (' + roteiro(s) + ')\n' +
+      'Cabine ' + NOME_CABINE[cabine] + ': ' + reais(atual) + ' para 2 pessoas';
+    var alerta = '[BF-ALERTA] Olá! Quero ser avisado se este cruzeiro baixar de preço:\n' +
+      s.navio + ', ' + dataBr(s.data) + ', ' + s.noites + ' noites, cabine ' + NOME_CABINE[cabine] + ' (hoje ' + reais(atual) + ' para 2 pessoas)';
+    return '<div class="card">' +
+      '<span class="pos">#' + pos + '</span>' +
+      '<span class="data">' + dataCurta(s.data) + ' · ' + s.noites + ' noites</span>' +
+      '<span class="navio">' + esc(s.navio) + '</span>' +
+      '<span class="rota">' + esc(roteiro(s)) + '</span>' +
+      (caiu ? '<span class="tag">Baixou ' + Math.round((1 - atual / antes) * 100) + '% (' + reais(antes - atual) + ')</span>' : '') +
+      (caiu ? '<span class="antes">22/10: ' + reais(antes) + '</span>' : '') +
+      '<span class="preco">' + reais(atual) + ' <small>2 pessoas</small></span>' +
+      '<span class="pp">' + reais(Math.round(atual / 2)) + ' por pessoa, taxas inclusas</span>' +
+      '<a class="btn" target="_blank" rel="noopener" href="' + linkWhats(texto) + '">Quero esse</a>' +
+      (mostrarQueda ? '' : '<a class="aviso-link" target="_blank" rel="noopener" href="' + linkWhats(alerta) + '">Me avise se baixar</a>') +
+      '</div>';
+  }
+
+  function desenhar() {
+    var lista = validas();
+    var top = lista.slice().sort(function (a, b) { return a.atual[cabine] - b.atual[cabine] || (a.data < b.data ? -1 : 1); }).slice(0, 10);
+    $('top10').innerHTML = top.map(function (s, k) { return card(s, k + 1, false); }).join('') ||
+      '<div class="vazio">Sem preços nesta cabine hoje.</div>';
+
+    var quedas = lista.filter(function (s) { return s.base && s.base[cabine] && s.atual[cabine] < s.base[cabine]; })
+      .sort(function (a, b) {
+        return (b.base[cabine] - b.atual[cabine]) / b.base[cabine] - (a.base[cabine] - a.atual[cabine]) / a.base[cabine];
+      }).slice(0, 5);
+    $('quedas').innerHTML = quedas.map(function (s, k) { return card(s, k + 1, true); }).join('') ||
+      '<div class="vazio">Nenhuma saída baixou de preço desde 22/10 nesta cabine ainda. Conferimos todo dia: volte amanhã.</div>';
+  }
+
+  function preencherNavios() {
+    var hoje = hojeIso(), porNavio = {};
+    saidas.forEach(function (s) { if (s.data > hoje) (porNavio[s.navio] = porNavio[s.navio] || []).push(s); });
+    var nomes = Object.keys(porNavio).sort();
+    $('f-navio').innerHTML = nomes.map(function (n) { return '<option>' + esc(n) + '</option>'; }).join('');
+    function datas() {
+      var l = porNavio[$('f-navio').value] || [];
+      $('f-data').innerHTML = l.map(function (s) {
+        return '<option value="' + s.data + '|' + s.noites + '">' + dataBr(s.data) + ' · ' + s.noites + ' noites · ' + esc(roteiro(s)) + '</option>';
+      }).join('');
+    }
+    $('f-navio').onchange = datas;
+    datas();
+  }
+
+  $('cabines').onclick = function (ev) {
+    var b = ev.target.closest('button'); if (!b) return;
+    cabine = b.dataset.c;
+    [].forEach.call(this.children, function (x) { x.classList.toggle('ativo', x === b); });
+    desenhar();
+  };
+
+  var aba = 'sei';
+  $('abas').onclick = function (ev) {
+    var b = ev.target.closest('button'); if (!b) return;
+    aba = b.dataset.a;
+    [].forEach.call(this.children, function (x) { x.classList.toggle('ativo', x === b); });
+    $('campos-sei').classList.toggle('oculto', aba !== 'sei');
+    $('campos-sugestao').classList.toggle('oculto', aba === 'sei');
+  };
+
+  $('f-enviar').onclick = function () {
+    var nome = $('f-nome').value.trim(), texto;
+    var fim = '\nPessoas: ' + $('f-pessoas').value + '\nCabine: ' + $('f-cabine').value + (nome ? '\nNome: ' + nome : '');
+    if (aba === 'sei') {
+      var d = ($('f-data').value || '|').split('|');
+      if (!d[0]) { alert('Escolha o navio e a data.'); return; }
+      texto = '[BF] Olá! Quero comparar o preço deste cruzeiro na Black Friday:\nNavio: ' + $('f-navio').value +
+        '\nSaída: ' + dataBr(d[0]) + ', ' + d[1] + ' noites' + fim;
+    } else {
+      var ini = $('f-inicio').value, ate = $('f-fim').value;
+      if (!ini || !ate) { alert('Informe as duas datas.'); return; }
+      texto = '[BF] Olá! Quero sugestões de cruzeiro na Black Friday:\nPeríodo: de ' + dataBr(ini) + ' a ' + dataBr(ate) + fim;
+    }
+    window.open(linkWhats(texto), '_blank');
+  };
+
+  contagem();
+  setInterval(contagem, 30000);
+
+  fetch(DADOS + '?v=' + Date.now()).then(function (r) { return r.json(); }).then(function (j) {
+    saidas = j.saidas;
+    var a = new Date(j.atualizadoEm);
+    $('atualizado').textContent = 'Preços conferidos em ' + a.toLocaleDateString('pt-BR') + ' às ' +
+      a.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    desenhar();
+    preencherNavios();
+  }).catch(function () {
+    $('atualizado').textContent = 'Não conseguimos carregar os preços agora. Fale com a gente pelo WhatsApp.';
+  });
+})();
+</script>
+</body>
+</html>
