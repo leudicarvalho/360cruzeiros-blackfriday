@@ -134,7 +134,7 @@
   function dataCurta(iso) { var p = iso.split('-'); return p[2] + ' ' + MESES[+p[1] - 1] + ' ' + p[0]; }
   function dataBr(iso) { var p = iso.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
   function hojeIso() { return new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); }
-  function roteiro(s) { return (s.soIda ? 'Só ida até ' : '') + s.roteiro.replace(/^,\s*/, ''); }
+  function roteiro(s) { return (s.soIda ? 'Só ida: ' : '') + s.roteiro; }
   function linkWhats(texto) { return 'https://wa.me/' + WHATS + '?text=' + encodeURIComponent(texto); }
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
