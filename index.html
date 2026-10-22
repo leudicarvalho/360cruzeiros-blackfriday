@@ -84,7 +84,9 @@
   section.longos { --cor: var(--ciano); }
   section.quedas { --cor: var(--queda); }
   section.pesquisa { --cor: #e4eef2; text-align: center; }
-  .rotulo { display: inline-block; background: color-mix(in srgb, var(--cor) 16%, transparent); color: var(--cor); font-size: 12px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; }
+  /* Título da seção bem destacado (Leonardo, 22/10): maior, com borda e fundo na cor do bloco. */
+  .rotulo { display: inline-block; background: color-mix(in srgb, var(--cor) 24%, transparent); border: 2px solid var(--cor); color: var(--cor); font-size: 17px; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; padding: 9px 18px; border-radius: 999px; }
+  @media (max-width: 420px) { .rotulo { font-size: 14px; letter-spacing: 1px; padding: 8px 14px; } }
   h2 { font-size: clamp(24px, 4.4vw, 32px); font-weight: 800; line-height: 1.1; margin: 10px 0 6px; letter-spacing: -0.5px; }
   h2 em { font-style: normal; color: var(--cor); }
   .explica { color: var(--suave); font-size: 14px; margin-bottom: 16px; }
@@ -219,7 +221,7 @@
   </section>
 
   <section class="quedas">
-    <span class="rotulo">Comparação com 22 de outubro</span>
+    <span class="rotulo">Comparação com os preços de outubro</span>
     <h2><em>5</em> saídas que mais baixaram</h2>
     <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Preço de hoje comparado com o que registramos em 22/10. Se ainda não baixou, aparecem as mais baratas.</p>
     <p class="dica">Arraste para o lado para ver todos →</p>
