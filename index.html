@@ -21,43 +21,43 @@
   body { background: var(--fundo); color: var(--texto); font-family: var(--fonte); line-height: 1.4; }
   .wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px 40px; }
 
-  .topo { position: relative; text-align: center; margin: 0 -16px 8px; padding: 24px 16px 30px; border-radius: 0 0 28px 28px; overflow: hidden;
-    background: linear-gradient(160deg, rgba(7,22,29,.88) 0%, rgba(10,30,40,.75) 50%, rgba(15,46,58,.92) 100%),
+  /* Topo compacto (pedido do Leonardo, 22/10): quem abre já vê as promoções logo abaixo.
+     Computador: texto à esquerda, prazo e aviso à direita. Celular: um embaixo do outro. */
+  .topo { position: relative; margin: 0 -16px 4px; padding: 12px 20px 18px; border-radius: 0 0 24px 24px; overflow: hidden;
+    background: linear-gradient(160deg, rgba(7,22,29,.9) 0%, rgba(10,30,40,.8) 50%, rgba(15,46,58,.92) 100%),
       url('https://static.wixstatic.com/media/c17eb2_48f6acdc40cc445b941835be15115c99~mv2.jpg') center/cover no-repeat; }
   .topo::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(248,196,99,.6), transparent); }
-  .logo { display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,.08); border: 1px solid rgba(248,196,99,.3); border-radius: 60px; padding: 7px 18px 7px 9px; text-decoration: none; margin-bottom: 22px; }
-  .logo img { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--ouro); object-fit: cover; }
-  .logo span { font-weight: 800; font-size: 16px; color: var(--ouro); letter-spacing: .5px; }
-  .eyebrow { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 14px; }
-  .eyebrow i { flex: 0 1 40px; height: 1px; background: rgba(248,196,99,.5); }
-  .eyebrow span { font-weight: 700; font-size: clamp(10px, 2.6vw, 12px); letter-spacing: 2px; text-transform: uppercase; color: rgba(248,196,99,.9); }
-  .selo { display: inline-block; background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro)); color: var(--fundo); font-weight: 900; letter-spacing: 3px; font-size: 14px; padding: 7px 16px; border-radius: 60px; }
-  h1 { font-size: clamp(30px, 6vw, 52px); font-weight: 900; line-height: 1.1; letter-spacing: -.5px; margin-top: 14px; }
-  .h1-ouro { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 14px; }
-  .h1-ouro i { flex: 0 1 80px; height: 2px; }
-  .h1-ouro i:first-child { background: linear-gradient(to right, transparent, var(--ouro)); }
-  .h1-ouro i:last-child { background: linear-gradient(to left, transparent, var(--ouro)); }
-  .h1-ouro h1 { color: var(--ouro); margin: 0; white-space: nowrap; }
-  /* Celular: sem os traços dos lados, para o título e a linha de cima caberem. */
-  @media (max-width: 480px) { .h1-ouro i, .eyebrow i { display: none; } .eyebrow span { letter-spacing: 1.2px; } }
-  .sub { color: rgba(255,255,255,.88); font-size: 16px; max-width: 600px; margin: 0 auto; }
-  .contagem-rotulo { margin-top: 24px; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--suave); }
-  .contagem { display: flex; justify-content: center; gap: 10px; margin: 8px 0 0; }
-  .contagem div { background: rgba(7,22,29,.7); border: 1px solid rgba(248,196,99,.35); border-radius: 12px; min-width: 70px; padding: 8px 6px; }
-  .contagem b { display: block; font-size: 26px; font-weight: 900; color: var(--ouro); }
-  .contagem small { color: var(--suave); font-size: 11px; text-transform: uppercase; }
-  .aviso { max-width: 560px; margin: 16px auto 0; background: rgba(232,65,24,.16); border: 1px solid rgba(232,65,24,.6); border-radius: 14px; padding: 12px 16px; font-size: 14px; color: #fff; text-align: left; display: flex; gap: 10px; align-items: flex-start; }
+  .barra { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  .logo { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.08); border: 1px solid rgba(248,196,99,.3); border-radius: 60px; padding: 4px 14px 4px 4px; text-decoration: none; }
+  .logo img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--ouro); object-fit: cover; }
+  .logo span { font-weight: 800; font-size: 14px; color: var(--ouro); }
+  .atualizado { color: var(--suave); font-size: 12px; text-align: right; }
+  .topo-grid { display: grid; grid-template-columns: 1fr; gap: 14px; text-align: center; }
+  .selo { display: inline-block; background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro)); color: var(--fundo); font-weight: 900; letter-spacing: 2.5px; font-size: 12px; padding: 5px 12px; border-radius: 60px; }
+  h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 900; line-height: 1.1; letter-spacing: -.5px; margin: 8px 0 6px; }
+  h1 em { font-style: normal; color: var(--ouro); white-space: nowrap; }
+  .sub { color: rgba(255,255,255,.85); font-size: 14px; }
+  .sub b { color: #fff; }
+  .prazo-rotulo { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--suave); }
+  .contagem { display: flex; justify-content: center; gap: 8px; margin-top: 6px; }
+  .contagem div { background: rgba(7,22,29,.7); border: 1px solid rgba(248,196,99,.35); border-radius: 10px; min-width: 58px; padding: 5px 6px; text-align: center; }
+  .contagem b { display: block; font-size: 22px; font-weight: 900; line-height: 1.1; color: var(--ouro); }
+  .contagem small { color: var(--suave); font-size: 10px; text-transform: uppercase; }
+  .aviso { margin-top: 10px; background: rgba(232,65,24,.16); border: 1px solid rgba(232,65,24,.6); border-radius: 12px; padding: 8px 12px; font-size: 13px; line-height: 1.35; color: #fff; text-align: left; display: flex; gap: 8px; align-items: flex-start; }
   .aviso b { color: #ff9b7d; }
-  .aviso::before { content: '!'; flex: 0 0 22px; height: 22px; border-radius: 50%; background: var(--alerta); color: #fff; font-weight: 900; font-size: 14px; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
-  .atualizado { color: var(--suave); font-size: 12px; margin-top: 14px; }
+  .aviso::before { content: '!'; flex: 0 0 20px; height: 20px; border-radius: 50%; background: var(--alerta); color: #fff; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  @media (min-width: 760px) {
+    .topo-grid { grid-template-columns: 1.25fr 1fr; gap: 28px; align-items: center; text-align: left; }
+    .prazo { text-align: center; }
+  }
 
-  .cabines { display: flex; justify-content: center; gap: 8px; margin: 22px 0 6px; }
+  .cabines { display: flex; justify-content: center; gap: 8px; margin: 16px 0 4px; }
   .cabines button { background: transparent; color: var(--texto); border: 1px solid var(--linha); border-radius: 999px; padding: 9px 18px; font: 700 14px var(--fonte); cursor: pointer; white-space: nowrap; }
   @media (max-width: 420px) { .cabines { gap: 6px; } .cabines button { flex: 1; padding: 9px 4px; font-size: 13px; } }
   .cabines button.ativo { background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro)); border-color: var(--ouro); color: var(--fundo); }
 
   /* Cada bloco é um painel com cor própria: mini = ouro, 5+ noites = ciano, quedas = verde, pesquisa = branco. */
-  section { margin-top: 28px; background: #0b222c; border: 1px solid var(--linha); border-top: 4px solid var(--cor); border-radius: 20px; padding: 22px 18px 20px; --cor: var(--ouro); }
+  section { margin-top: 20px; background: #0b222c; border: 1px solid var(--linha); border-top: 4px solid var(--cor); border-radius: 20px; padding: 22px 18px 20px; --cor: var(--ouro); }
   section.longos { --cor: var(--ciano); }
   section.quedas { --cor: var(--queda); }
   section.pesquisa { --cor: #e4eef2; text-align: center; }
@@ -125,19 +125,25 @@
 <body>
 <div class="wrap">
   <header class="topo">
-    <a class="logo" href="https://www.360cruzeiros.com.br" target="_blank" rel="noopener">
-      <img src="https://static.wixstatic.com/media/c17eb2_bd92c19f1aa14666be0f75c50a83609a~mv2.jpg" alt="360cruzeiros" width="44" height="44">
-      <span>360cruzeiros</span>
-    </a>
-    <div class="eyebrow"><i></i><span>Cruzeiros MSC e Costa saindo de Santos</span><i></i></div>
-    <span class="selo">BLACK NOVEMBER</span>
-    <h1>Aqui o desconto</h1>
-    <div class="h1-ouro"><i></i><h1>é de verdade</h1><i></i></div>
-    <p class="sub">Todo dia comparamos o preço de cada saída com o que registramos em 22 de outubro. Se baixou, você vê aqui.</p>
-    <p class="contagem-rotulo">A Black November termina em</p>
-    <div class="contagem" id="contagem"></div>
-    <p class="aviso"><span><b>Não deixe para o último dia:</b> as cabines mais baratas e as melhores datas costumam esgotar bem antes do fim da promoção.</span></p>
-    <p class="atualizado" id="atualizado">Carregando preços...</p>
+    <div class="barra">
+      <a class="logo" href="https://www.360cruzeiros.com.br" target="_blank" rel="noopener">
+        <img src="https://static.wixstatic.com/media/c17eb2_bd92c19f1aa14666be0f75c50a83609a~mv2.jpg" alt="360cruzeiros" width="32" height="32">
+        <span>360cruzeiros</span>
+      </a>
+      <p class="atualizado" id="atualizado">Carregando preços...</p>
+    </div>
+    <div class="topo-grid">
+      <div>
+        <span class="selo">BLACK NOVEMBER</span>
+        <h1>Aqui o desconto <em>é de verdade</em></h1>
+        <p class="sub"><b>Cruzeiros MSC e Costa saindo de Santos.</b> Todo dia comparamos cada preço com o de 22 de outubro: se baixou, você vê aqui.</p>
+      </div>
+      <div class="prazo">
+        <p class="prazo-rotulo">A Black November termina em</p>
+        <div class="contagem" id="contagem"></div>
+        <p class="aviso"><span><b>Não deixe para o último dia:</b> as cabines mais baratas e as melhores datas costumam esgotar bem antes do fim da promoção.</span></p>
+      </div>
+    </div>
   </header>
 
   <div class="cabines" id="cabines">
@@ -356,7 +362,7 @@
   fetch(DADOS).then(function (r) { return r.json(); }).then(function (j) {
     saidas = j.saidas;
     var a = new Date(j.atualizadoEm);
-    $('atualizado').textContent = 'Preços conferidos em ' + a.toLocaleDateString('pt-BR') + ' às ' +
+    $('atualizado').textContent = 'Preços de ' + a.toLocaleDateString('pt-BR') + ', ' +
       a.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     desenhar();
     preencherNavios();
