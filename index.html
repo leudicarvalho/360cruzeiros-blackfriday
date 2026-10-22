@@ -121,9 +121,12 @@
   .data { display: block; color: var(--cor); font-weight: 800; font-size: 16px; white-space: nowrap; letter-spacing: -.2px; }
   .data i { font-style: normal; font-weight: 700; font-size: 14px; color: #fff; opacity: .75; margin: 0 4px; }
   .noites { display: block; color: var(--suave); font-size: 12px; font-weight: 600; }
-  .c-navio { border-bottom: 1px dashed var(--linha); }
+  .c-navio { border-bottom: 1px dashed var(--linha); flex: 1; }   /* estica: o preço fica na mesma altura em todos os cartões da linha */
   .navio { display: block; font-weight: 800; font-size: 16px; color: #fff; }
-  .rota { display: block; color: var(--suave); font-size: 12px; min-height: 32px; margin-top: 2px; }
+  /* Roteiro sempre com Santos nas duas pontas: deixa claro que sai e volta para Santos (Leonardo, 22/10). */
+  .rota { display: block; color: var(--suave); font-size: 12px; line-height: 1.35; min-height: 49px; margin-top: 2px; }
+  .rota b { color: #fff; font-weight: 700; }
+  .explica .santos { color: var(--cor); }
   .c-queda { display: flex; flex-direction: column; gap: 6px; border-bottom: 1px dashed var(--linha); }
   .antes { color: var(--suave); text-decoration: line-through; font-size: 12px; }
   .c-preco { background: rgba(0,0,0,.18); }
@@ -202,7 +205,7 @@
   <section class="mini">
     <span class="rotulo">Mini cruzeiros · 3 e 4 noites</span>
     <h2><em>5</em> menores preços de hoje</h2>
-    <p class="explica">Valor total para 2 adultos, com taxas, na cabine escolhida acima.</p>
+    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total para 2 adultos, com taxas, na cabine escolhida acima.</p>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="mini"></div>
   </section>
@@ -210,7 +213,7 @@
   <section class="longos">
     <span class="rotulo">Cruzeiros de 5 noites ou mais</span>
     <h2><em>5</em> menores preços de hoje</h2>
-    <p class="explica">Valor total para 2 adultos, com taxas, na cabine escolhida acima.</p>
+    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total para 2 adultos, com taxas, na cabine escolhida acima.</p>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="longos"></div>
   </section>
@@ -218,7 +221,7 @@
   <section class="quedas">
     <span class="rotulo">Comparação com 22 de outubro</span>
     <h2><em>5</em> saídas que mais baixaram</h2>
-    <p class="explica">Preço de hoje comparado com o que registramos em 22/10. Se ainda não baixou, aparecem as mais baratas.</p>
+    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Preço de hoje comparado com o que registramos em 22/10. Se ainda não baixou, aparecem as mais baratas.</p>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="quedas"></div>
   </section>
@@ -226,7 +229,7 @@
   <section class="pesquisa">
     <span class="rotulo">Pesquisa pelo WhatsApp</span>
     <h2>Quer comparar <em>outro cruzeiro?</em></h2>
-    <p class="explica">Conte o que você procura. A gente confere o preço e te responde no WhatsApp.</p>
+    <p class="explica"><b class="santos">Só cruzeiros que saem de Santos e voltam para Santos.</b> Conte o que você procura. A gente confere o preço e te responde no WhatsApp.</p>
     <div class="form">
       <div class="abas" id="abas">
         <button data-a="sei" class="ativo">Já sei o cruzeiro</button>
@@ -322,7 +325,7 @@
         '<span class="data">' + periodo(s) + '</span>' +
         '<span class="noites">' + s.data.slice(0, 4) + ' · ' + s.noites + ' noites</span></div></div>' +
       '<div class="c-navio"><span class="navio">' + esc(s.navio) + '</span>' +
-        '<span class="rota">' + esc(roteiro(s)) + '</span></div>' +
+        '<span class="rota"><b>Santos</b> → ' + esc(roteiro(s)) + ' → <b>Santos</b></span></div>' +
       (mostrarQueda && antes ?
         '<div class="c-queda"><span class="compara">22/10: ' + reais(antes) + '<br>Hoje: ' + reais(atual) + '</span>' +
         '<span class="tag' + (caiu ? '' : ' igual') + '">' + (caiu ? 'Baixou ' + pct(queda(s)) + ' (' + reais(antes - atual) + ')' :
