@@ -21,32 +21,41 @@
   body { background: var(--fundo); color: var(--texto); font-family: var(--fonte); line-height: 1.4; }
   .wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px 40px; }
 
-  /* Topo compacto (pedido do Leonardo, 22/10): quem abre já vê as promoções logo abaixo.
-     Computador: texto à esquerda, prazo e aviso à direita. Celular: um embaixo do outro. */
+  /* Topo compacto (pedido do Leonardo, 22/10): quem abre já vê as promoções logo abaixo. */
   .topo { position: relative; margin: 0 -16px 4px; padding: 12px 20px 18px; border-radius: 0 0 24px 24px; overflow: hidden;
     background: linear-gradient(160deg, rgba(7,22,29,.9) 0%, rgba(10,30,40,.8) 50%, rgba(15,46,58,.92) 100%),
       url('https://static.wixstatic.com/media/c17eb2_48f6acdc40cc445b941835be15115c99~mv2.jpg') center/cover no-repeat; }
   .topo::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(248,196,99,.6), transparent); }
-  .barra { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  /* Topo em 3 linhas (Leonardo, 22/10), com as mesmas bordas à esquerda e à direita:
+     1) logo + selo BLACK NOVEMBER | quando os preços foram conferidos;
+     2) título numa linha só | contador (mesma altura);
+     3) caixa de info | caixa de aviso, lado a lado e com a mesma altura.
+     Celular: tudo centralizado, um embaixo do outro. */
+  .barra { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 14px; }
   .logo { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.08); border: 1px solid rgba(248,196,99,.3); border-radius: 60px; padding: 4px 14px 4px 4px; text-decoration: none; }
   .logo img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--ouro); object-fit: cover; }
   .logo span { font-weight: 800; font-size: 14px; color: var(--ouro); }
-  .atualizado { color: var(--suave); font-size: 12px; text-align: right; }
-  /* Grade do topo: título | contador em cima, e as duas caixas (info | aviso) embaixo, com a mesma altura.
-     Celular: título, info, contador, aviso, um embaixo do outro. */
-  .topo-grid { display: grid; grid-template-columns: 1fr; grid-template-areas: "titulo" "info" "prazo" "aviso"; gap: 12px; text-align: center; }
-  .t-titulo { grid-area: titulo; }
-  .t-prazo { grid-area: prazo; }
-  .info { grid-area: info; }
-  .aviso { grid-area: aviso; }
-  .selo { display: inline-block; background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro)); color: var(--fundo); font-weight: 900; letter-spacing: 2.5px; font-size: 12px; padding: 5px 12px; border-radius: 60px; }
-  h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 900; line-height: 1.1; letter-spacing: -.5px; margin-top: 8px; }
+  .selo { display: inline-flex; align-items: center; height: 34px; background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro)); color: var(--fundo); font-weight: 900; letter-spacing: 2.5px; font-size: 13px; padding: 0 16px; border-radius: 60px; }
+  .atualizado { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: 60px; background: rgba(37,211,102,.12); border: 1px solid rgba(37,211,102,.5); color: #fff; font-size: 13px; font-weight: 600; }
+  .atualizado b { color: #7ef0a8; }
+  .atualizado::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 0 4px rgba(37,211,102,.25); }
+  .linha2 { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; margin-bottom: 14px; }
+  h1 { font-size: clamp(25px, 3.6vw, 36px); font-weight: 900; line-height: 1.1; letter-spacing: -.5px; }
   h1 em { font-style: normal; color: var(--ouro); white-space: nowrap; }
-  .prazo-rotulo { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--suave); }
-  .contagem { display: flex; justify-content: center; gap: 8px; margin-top: 6px; }
-  .contagem div { background: rgba(7,22,29,.7); border: 1px solid rgba(248,196,99,.35); border-radius: 10px; min-width: 58px; padding: 5px 6px; text-align: center; }
-  .contagem b { display: block; font-size: 22px; font-weight: 900; line-height: 1.1; color: var(--ouro); }
-  .contagem small { color: var(--suave); font-size: 10px; text-transform: uppercase; }
+  .t-prazo { display: flex; align-items: center; gap: 10px; }
+  .prazo-rotulo { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--suave); line-height: 1.3; text-align: right; }
+  .contagem { display: flex; gap: 8px; }
+  .contagem div { background: rgba(7,22,29,.75); border: 1px solid rgba(248,196,99,.45); border-radius: 12px; min-width: 66px; padding: 6px 6px 5px; text-align: center; }
+  .contagem b { display: block; font-size: 28px; font-weight: 900; line-height: 1.05; color: var(--ouro); }
+  .contagem small { color: var(--suave); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .caixas { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  @media (max-width: 420px) {
+    .barra { gap: 8px; margin-bottom: 12px; }
+    .selo { font-size: 11px; letter-spacing: 2px; padding: 0 12px; height: 32px; }
+    .logo span { font-size: 13px; }
+    .contagem div { min-width: 58px; }
+    .contagem b { font-size: 24px; }
+  }
   /* Duas caixas irmãs: info (ciano, com ✓) e aviso (vermelho, com !). */
   .caixa { border-radius: 12px; padding: 10px 12px; font-size: 13px; line-height: 1.4; color: #fff; text-align: left; display: flex; gap: 10px; align-items: center; }
   .caixa::before { flex: 0 0 22px; height: 22px; border-radius: 50%; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; }
@@ -57,10 +66,12 @@
   .aviso b { color: #ff9b7d; }
   .aviso::before { content: '!'; background: var(--alerta); color: #fff; }
   @media (min-width: 760px) {
-    .topo-grid { grid-template-columns: 1fr 1fr; grid-template-areas: "titulo prazo" "info aviso"; column-gap: 24px; row-gap: 14px; align-items: end; text-align: left; }
-    .caixa { align-self: stretch; }
-    .t-prazo { text-align: right; }
-    .contagem { justify-content: flex-end; }
+    .barra { justify-content: flex-start; }
+    .atualizado { margin-left: auto; }
+    .linha2 { flex-direction: row; justify-content: space-between; text-align: left; }
+    h1 { white-space: nowrap; }
+    .t-prazo { gap: 12px; }
+    .caixas { grid-template-columns: 1fr 1fr; gap: 24px; }
   }
 
   .cabines { display: flex; justify-content: center; gap: 8px; margin: 16px 0 4px; }
@@ -99,7 +110,13 @@
     background: linear-gradient(180deg, color-mix(in srgb, var(--cor) 7%, #0f2a35) 0%, #0b2029 100%); }
   .card > div { padding: 11px 14px; }
   .c-topo { display: flex; align-items: center; gap: 9px; background: color-mix(in srgb, var(--cor) 16%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--cor) 30%, transparent); }
-  .pos { flex: 0 0 36px; height: 36px; border-radius: 50%; background: var(--cor); color: var(--fundo); font-weight: 900; font-size: 17px; letter-spacing: -1px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px color-mix(in srgb, var(--cor) 45%, transparent); }
+  /* Posição como medalha: 1º ouro, 2º prata, 3º bronze; 4º e 5º em aço (Leonardo, 22/10). */
+  .pos { flex: 0 0 38px; height: 38px; border-radius: 50%; color: #1a1a1a; font-weight: 900; font-size: 17px; letter-spacing: -1px; display: flex; align-items: center; justify-content: center;
+    border: 2px solid rgba(255,255,255,.55); box-shadow: 0 4px 12px rgba(0,0,0,.4), inset 0 -3px 6px rgba(0,0,0,.18); }
+  .pos.p1 { background: linear-gradient(145deg, #ffe9a8, #f8c463 45%, #b8862b); }
+  .pos.p2 { background: linear-gradient(145deg, #ffffff, #d5dbe2 45%, #8f99a4); }
+  .pos.p3 { background: linear-gradient(145deg, #ffd2ad, #d38b55 45%, #8a4e26); }
+  .pos.p4, .pos.p5 { background: linear-gradient(145deg, #9fb0bb, #6c7c87 45%, #45525b); color: #fff; border-color: rgba(255,255,255,.3); }
   .data { display: block; color: var(--cor); font-weight: 800; font-size: 14.5px; }
   .noites { display: block; color: var(--suave); font-size: 12px; font-weight: 600; }
   .c-navio { border-bottom: 1px dashed var(--linha); }
@@ -108,7 +125,7 @@
   .c-queda { display: flex; flex-direction: column; gap: 6px; border-bottom: 1px dashed var(--linha); }
   .antes { color: var(--suave); text-decoration: line-through; font-size: 12px; }
   .c-preco { background: rgba(0,0,0,.18); }
-  .preco { display: block; font-size: 24px; font-weight: 900; line-height: 1.1; color: #fff; letter-spacing: -.5px; }
+  .preco { display: block; font-size: 26px; font-weight: 900; line-height: 1.1; color: var(--cor); letter-spacing: -.5px; text-shadow: 0 2px 12px color-mix(in srgb, var(--cor) 35%, transparent); }
   .pp { display: block; color: var(--suave); font-size: 11.5px; margin-top: 3px; }
   .c-acoes { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-bottom: 14px !important; }
   .compara { color: var(--suave); font-size: 12px; background: var(--fundo); border-radius: 6px; padding: 6px 8px; }
@@ -148,17 +165,17 @@
         <img src="https://static.wixstatic.com/media/c17eb2_bd92c19f1aa14666be0f75c50a83609a~mv2.jpg" alt="360cruzeiros" width="32" height="32">
         <span>360cruzeiros</span>
       </a>
+      <span class="selo">BLACK NOVEMBER</span>
       <p class="atualizado" id="atualizado">Carregando preços...</p>
     </div>
-    <div class="topo-grid">
-      <div class="t-titulo">
-        <span class="selo">BLACK NOVEMBER</span>
-        <h1>Aqui o desconto <em>é de verdade</em></h1>
-      </div>
+    <div class="linha2">
+      <h1>Aqui o desconto <em>é de verdade</em></h1>
       <div class="t-prazo">
-        <p class="prazo-rotulo">A Black November termina em</p>
+        <p class="prazo-rotulo">A Black November<br>termina em</p>
         <div class="contagem" id="contagem"></div>
       </div>
+    </div>
+    <div class="caixas">
       <p class="caixa info"><span><b>Cruzeiros MSC e Costa saindo de Santos.</b> Todo dia comparamos cada preço com o de 22 de outubro: se baixou, você vê aqui.</span></p>
       <p class="caixa aviso"><span><b>Não deixe para o último dia:</b> as cabines mais baratas e as melhores datas costumam esgotar bem antes do fim da promoção.</span></p>
     </div>
@@ -208,8 +225,8 @@
         <label>Data de saída<select id="f-data"></select></label>
       </div>
       <div class="campos sug oculto" id="campos-sugestao">
-        <label>Posso viajar a partir de<input type="date" id="f-inicio"></label>
-        <label>Preciso voltar até<input type="date" id="f-fim"></label>
+        <label>Posso viajar a partir de<input type="date" id="f-inicio" max="2027-04-30"></label>
+        <label>Preciso voltar até<input type="date" id="f-fim" max="2027-04-30"></label>
       </div>
       <div class="campos par">
         <label>Quantas pessoas<select id="f-pessoas">
@@ -235,6 +252,7 @@
   var WHATS = '5582993258783';
   var DADOS = 'precos.json';   // mesmo endereço da página; já vem pré-carregado pelo <link rel="preload">
   var FIM_BLACK_NOVEMBER = new Date('2026-12-01T00:00:00-03:00');   // fim do dia 30/11
+  var ULTIMA_SAIDA = '2027-04-30';   // a página mostra só saídas até abril de 2027 (Leonardo, 22/10)
   var NOME_CABINE = { i: 'Interna', e: 'Externa', v: 'Varanda' };
   var MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
   var cabine = 'i', saidas = [];
@@ -260,11 +278,11 @@
     $('contagem').innerHTML = '<div><b>' + d + '</b><small>dias</small></div><div><b>' + h + '</b><small>horas</small></div><div><b>' + m + '</b><small>min</small></div>';
   }
 
-  // Saídas que entram nas listas: futuras, de MSC ou Costa, com preço na cabine escolhida.
+  // Saídas que entram nas listas: futuras até ULTIMA_SAIDA, de MSC ou Costa, com preço na cabine escolhida.
   // O arquivo de preços já traz só as que começam e terminam em Santos.
   function validas() {
     var hoje = hojeIso();
-    return saidas.filter(function (s) { return s.data > hoje && !s.tematico && s.atual[cabine]; });
+    return saidas.filter(function (s) { return s.data > hoje && s.data <= ULTIMA_SAIDA && !s.tematico && s.atual[cabine]; });
   }
 
   // Quanto baixou desde 22/10, em % (0 = mesmo preço; negativo = subiu).
@@ -280,7 +298,7 @@
       s.navio + ', ' + dataBr(s.data) + ', ' + s.noites + ' noites, cabine ' + NOME_CABINE[cabine] + ' (hoje ' + reais(atual) + ' para 2 pessoas)';
     // Cartão em faixas separadas: posição e data / navio e roteiro / (queda) / preço / botões.
     return '<div class="card">' +
-      '<div class="c-topo"><span class="pos">' + pos + 'º</span><div>' +
+      '<div class="c-topo"><span class="pos p' + pos + '">' + pos + 'º</span><div>' +
         '<span class="data">' + periodo(s) + '</span>' +
         '<span class="noites">' + s.data.slice(0, 4) + ' · ' + s.noites + ' noites</span></div></div>' +
       '<div class="c-navio"><span class="navio">' + esc(s.navio) + '</span>' +
@@ -323,7 +341,7 @@
 
   function preencherNavios() {
     var hoje = hojeIso(), porNavio = {};
-    saidas.forEach(function (s) { if (s.data > hoje) (porNavio[s.navio] = porNavio[s.navio] || []).push(s); });
+    saidas.forEach(function (s) { if (s.data > hoje && s.data <= ULTIMA_SAIDA) (porNavio[s.navio] = porNavio[s.navio] || []).push(s); });
     // MSC e Costa primeiro; os temáticos da Promoação no fim da lista.
     var nomes = Object.keys(porNavio).sort(function (a, b) {
       return porNavio[a][0].tematico - porNavio[b][0].tematico || a.localeCompare(b, 'pt-BR');
@@ -387,8 +405,8 @@
   fetch(DADOS).then(function (r) { return r.json(); }).then(function (j) {
     saidas = j.saidas;
     var a = new Date(j.atualizadoEm);
-    $('atualizado').textContent = 'Preços de ' + a.toLocaleDateString('pt-BR') + ', ' +
-      a.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    $('atualizado').innerHTML = 'Preços atualizados em <b>' + a.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' às ' +
+      a.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '</b>';
     desenhar();
     preencherNavios();
   }).catch(function () {
