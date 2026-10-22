@@ -117,9 +117,9 @@
   .pos.p2 { background: linear-gradient(145deg, #ffffff, #d5dbe2 45%, #8f99a4); }
   .pos.p3 { background: linear-gradient(145deg, #ffd2ad, #d38b55 45%, #8a4e26); }
   .pos.p4, .pos.p5 { background: linear-gradient(145deg, #9fb0bb, #6c7c87 45%, #45525b); color: #fff; border-color: rgba(255,255,255,.3); }
-  /* Data numa linha só; quando muda de mês ("30/11–03/12") a letra fica menor para caber. */
-  .data { display: block; color: var(--cor); font-weight: 800; font-size: 14.5px; white-space: nowrap; }
-  .data.longa { font-size: 12.5px; letter-spacing: -.2px; }
+  /* Data sempre no mesmo formato e numa linha só: "27/02 a 06/03" (Leonardo, 22/10). */
+  .data { display: block; color: var(--cor); font-weight: 800; font-size: 16px; white-space: nowrap; letter-spacing: -.2px; }
+  .data i { font-style: normal; font-weight: 700; font-size: 14px; color: #fff; opacity: .75; margin: 0 4px; }
   .noites { display: block; color: var(--suave); font-size: 12px; font-weight: 600; }
   .c-navio { border-bottom: 1px dashed var(--linha); }
   .navio { display: block; font-weight: 800; font-size: 16px; color: #fff; }
@@ -283,10 +283,10 @@
   function reais(n) { return 'R$ ' + n.toLocaleString('pt-BR'); }
   function dataBr(iso) { var p = iso.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
   function volta(s) { var d = new Date(s.data + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + s.noites); return d.toISOString().slice(0, 10); }
-  // Curto, mês em número (Leonardo, 22/10): "09–12/02"; mês diferente: "30/11–03/12". O ano vai na linha das noites.
+  // Ida e volta sempre com dia e mês: "27/02 a 06/03" (Leonardo, 22/10). O ano vai na linha das noites.
   function periodo(s) {
-    var a = s.data.split('-'), b = volta(s).split('-'), fim = b[2] + '/' + b[1];
-    return a[1] === b[1] ? a[2] + '–' + fim : a[2] + '/' + a[1] + '–' + fim;
+    var a = s.data.split('-'), b = volta(s).split('-');
+    return a[2] + '/' + a[1] + '<i>a</i>' + b[2] + '/' + b[1];
   }
   function hojeIso() { return new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); }
   function roteiro(s) { return s.roteiro; }
@@ -319,7 +319,7 @@
     // Cartão em faixas separadas: posição e data / navio e roteiro / (queda) / preço / botões.
     return '<div class="card">' +
       '<div class="c-topo"><span class="pos p' + pos + '">' + pos + 'º</span><div>' +
-        '<span class="data' + (s.data.slice(5, 7) !== volta(s).slice(5, 7) ? ' longa' : '') + '">' + periodo(s) + '</span>' +
+        '<span class="data">' + periodo(s) + '</span>' +
         '<span class="noites">' + s.data.slice(0, 4) + ' · ' + s.noites + ' noites</span></div></div>' +
       '<div class="c-navio"><span class="navio">' + esc(s.navio) + '</span>' +
         '<span class="rota">' + esc(roteiro(s)) + '</span></div>' +
