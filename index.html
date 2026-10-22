@@ -103,13 +103,13 @@
     .grade { display: grid; grid-template-columns: repeat(3, 1fr); overflow: visible; padding-bottom: 0; }
     .grade > .vazio { grid-column: 1 / -1; }
   }
-  @media (min-width: 960px) { .grade { grid-template-columns: repeat(5, 1fr); } }
+  @media (min-width: 960px) { .grade { grid-template-columns: repeat(5, 1fr); } .pos { flex-basis: 34px; height: 34px; font-size: 15px; } }
 
   /* Cartão em faixas, com a cor do bloco (--cor): topo tingido com a posição em destaque, linhas separando navio, preço e botões. */
   .card { border: 1px solid color-mix(in srgb, var(--cor) 28%, var(--linha)); border-radius: 16px; display: flex; flex-direction: column; position: relative; min-width: 0; overflow: hidden;
     background: linear-gradient(180deg, color-mix(in srgb, var(--cor) 7%, #0f2a35) 0%, #0b2029 100%); }
   .card > div { padding: 11px 14px; }
-  .c-topo { display: flex; align-items: center; gap: 9px; background: color-mix(in srgb, var(--cor) 16%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--cor) 30%, transparent); }
+  .c-topo { display: flex; align-items: center; gap: 8px; padding: 10px 12px !important; background: color-mix(in srgb, var(--cor) 16%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--cor) 30%, transparent); }
   /* Posição como medalha: 1º ouro, 2º prata, 3º bronze; 4º e 5º em aço (Leonardo, 22/10). */
   .pos { flex: 0 0 38px; height: 38px; border-radius: 50%; color: #1a1a1a; font-weight: 900; font-size: 17px; letter-spacing: -1px; display: flex; align-items: center; justify-content: center;
     border: 2px solid rgba(255,255,255,.55); box-shadow: 0 4px 12px rgba(0,0,0,.4), inset 0 -3px 6px rgba(0,0,0,.18); }
@@ -117,7 +117,9 @@
   .pos.p2 { background: linear-gradient(145deg, #ffffff, #d5dbe2 45%, #8f99a4); }
   .pos.p3 { background: linear-gradient(145deg, #ffd2ad, #d38b55 45%, #8a4e26); }
   .pos.p4, .pos.p5 { background: linear-gradient(145deg, #9fb0bb, #6c7c87 45%, #45525b); color: #fff; border-color: rgba(255,255,255,.3); }
-  .data { display: block; color: var(--cor); font-weight: 800; font-size: 14.5px; }
+  /* Data numa linha só; quando muda de mês ("30/11–03/12") a letra fica menor para caber. */
+  .data { display: block; color: var(--cor); font-weight: 800; font-size: 14.5px; white-space: nowrap; }
+  .data.longa { font-size: 12.5px; letter-spacing: -.2px; }
   .noites { display: block; color: var(--suave); font-size: 12px; font-weight: 600; }
   .c-navio { border-bottom: 1px dashed var(--linha); }
   .navio { display: block; font-weight: 800; font-size: 16px; color: #fff; }
@@ -253,17 +255,16 @@
   var FIM_BLACK_NOVEMBER = new Date('2026-12-01T00:00:00-03:00');   // fim do dia 30/11
   var ULTIMA_SAIDA = '2027-04-30';   // a página mostra só saídas até abril de 2027 (Leonardo, 22/10)
   var NOME_CABINE = { i: 'Interna', e: 'Externa', v: 'Varanda' };
-  var MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
   var cabine = 'i', saidas = [];
 
   function $(id) { return document.getElementById(id); }
   function reais(n) { return 'R$ ' + n.toLocaleString('pt-BR'); }
   function dataBr(iso) { var p = iso.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
   function volta(s) { var d = new Date(s.data + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + s.noites); return d.toISOString().slice(0, 10); }
-  // Curto: "09–12 fev"; mês diferente: "30 nov–03 dez". O ano vai na linha das noites.
+  // Curto, mês em número (Leonardo, 22/10): "09–12/02"; mês diferente: "30/11–03/12". O ano vai na linha das noites.
   function periodo(s) {
-    var a = s.data.split('-'), b = volta(s).split('-'), fim = b[2] + ' ' + MESES[+b[1] - 1];
-    return a[1] === b[1] ? a[2] + '–' + fim : a[2] + ' ' + MESES[+a[1] - 1] + '–' + fim;
+    var a = s.data.split('-'), b = volta(s).split('-'), fim = b[2] + '/' + b[1];
+    return a[1] === b[1] ? a[2] + '–' + fim : a[2] + '/' + a[1] + '–' + fim;
   }
   function hojeIso() { return new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); }
   function roteiro(s) { return s.roteiro; }
@@ -296,7 +297,7 @@
     // Cartão em faixas separadas: posição e data / navio e roteiro / (queda) / preço / botões.
     return '<div class="card">' +
       '<div class="c-topo"><span class="pos p' + pos + '">' + pos + 'º</span><div>' +
-        '<span class="data">' + periodo(s) + '</span>' +
+        '<span class="data' + (s.data.slice(5, 7) !== volta(s).slice(5, 7) ? ' longa' : '') + '">' + periodo(s) + '</span>' +
         '<span class="noites">' + s.data.slice(0, 4) + ' · ' + s.noites + ' noites</span></div></div>' +
       '<div class="c-navio"><span class="navio">' + esc(s.navio) + '</span>' +
         '<span class="rota">' + esc(roteiro(s)) + '</span></div>' +
