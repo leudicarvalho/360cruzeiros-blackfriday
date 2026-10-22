@@ -133,7 +133,6 @@
   .tag { align-self: flex-start; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: rgba(74,222,128,.15); color: var(--queda); }
   .btn { display: block; text-align: center; text-decoration: none; background: var(--verde); color: #fff; font-weight: 700; font-size: 14px; padding: 11px; border-radius: 8px; margin-top: auto; border: 0; cursor: pointer; font-family: inherit; width: 100%; }
   .btn:hover { background: var(--verde-escuro); }
-  .aviso-link { text-align: center; color: var(--suave); font-size: 12px; text-decoration: underline; cursor: pointer; background: none; border: 0; font-family: inherit; }
   .vazio { background: var(--card); border: 1px dashed var(--linha); border-radius: 12px; padding: 22px; color: var(--suave); text-align: center; }
 
   .form { background: var(--card); border: 1px solid var(--linha); border-radius: 12px; padding: 18px; max-width: 760px; }
@@ -294,8 +293,6 @@
     var texto = '[BF] Olá! Vi a página da Black November e quero esse cruzeiro:\n' +
       s.navio + ', de ' + dataBr(s.data) + ' a ' + dataBr(volta(s)) + ', ' + s.noites + ' noites (' + roteiro(s) + ')\n' +
       'Cabine ' + NOME_CABINE[cabine] + ': ' + reais(atual) + ' para 2 pessoas';
-    var alerta = '[BF-ALERTA] Olá! Quero ser avisado se este cruzeiro baixar de preço:\n' +
-      s.navio + ', ' + dataBr(s.data) + ', ' + s.noites + ' noites, cabine ' + NOME_CABINE[cabine] + ' (hoje ' + reais(atual) + ' para 2 pessoas)';
     // Cartão em faixas separadas: posição e data / navio e roteiro / (queda) / preço / botões.
     return '<div class="card">' +
       '<div class="c-topo"><span class="pos p' + pos + '">' + pos + 'º</span><div>' +
@@ -311,7 +308,6 @@
       '<div class="c-preco"><span class="preco">' + reais(atual) + '</span>' +
         '<span class="pp">2 pessoas · ' + reais(Math.round(atual / 2)) + ' cada, taxas inclusas</span></div>' +
       '<div class="c-acoes"><a class="btn" target="_blank" rel="noopener" href="' + linkWhats(texto) + '">Quero esse</a>' +
-      (mostrarQueda ? '' : '<a class="aviso-link" target="_blank" rel="noopener" href="' + linkWhats(alerta) + '">Me avise se baixar</a>') +
       '</div></div>';
   }
 
