@@ -141,13 +141,24 @@
   .abas { display: flex; gap: 8px; margin-bottom: 16px; }
   .abas button { flex: 1; background: transparent; border: 1px solid var(--linha); color: var(--texto); padding: 11px; border-radius: 8px; font: 700 14px var(--fonte); cursor: pointer; }
   .abas button.ativo { border-color: var(--ouro); color: var(--ouro); }
-  /* Celular: um campo abaixo do outro (só pessoas e cabine lado a lado). Computador: navio + data e as duas datas lado a lado. */
+  /* Celular: um campo abaixo do outro (pessoas e cabine lado a lado, nome embaixo).
+     Computador: navio + data; as duas datas + tipo; pessoas + cabine + nome, cada grupo numa linha. */
   .campos { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 14px; }
-  .campos.par { grid-template-columns: 1fr 1fr; }
+  .campos.tri { grid-template-columns: 1fr 1fr; }
+  .campos.tri .nome { grid-column: 1 / -1; }
   @media (min-width: 600px) {
     .campos.sei { grid-template-columns: 1fr 1.6fr; }
-    .campos.sug { grid-template-columns: 1fr 1fr; }
+    .campos.sug { grid-template-columns: 1fr 1fr 1.3fr; }
+    .campos.tri { grid-template-columns: .8fr 1fr 1.4fr; }
+    .campos.tri .nome { grid-column: auto; }
   }
+  /* Pacote de bebidas: botões de escolha; "quero entender a diferença" em destaque dourado. */
+  .bebidas { margin-bottom: 16px; }
+  .bebidas-rotulo { display: block; font-size: 13px; color: var(--suave); margin-bottom: 8px; }
+  .opcoes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opcoes button { background: var(--fundo); color: var(--texto); border: 1px solid var(--linha); border-radius: 999px; padding: 9px 14px; font: 600 13px var(--fonte); cursor: pointer; }
+  .opcoes button.duvida { border-color: rgba(248,196,99,.6); color: var(--ouro); background: rgba(248,196,99,.08); }
+  .opcoes button.ativo { background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro)); border-color: var(--ouro); color: var(--fundo); font-weight: 800; }
   @media (max-width: 420px) { .abas button { font-size: 13px; padding: 10px 6px; } }
   .erro { color: var(--alta); font-size: 13px; font-weight: 700; margin: -4px 0 10px; min-height: 0; }
   .erro:empty { display: none; }
@@ -228,17 +239,28 @@
       <div class="campos sug oculto" id="campos-sugestao">
         <label>Posso viajar a partir de<input type="date" id="f-inicio" max="2027-04-30"></label>
         <label>Preciso voltar até<input type="date" id="f-fim" max="2027-04-30"></label>
+        <label>Tipo de cruzeiro<select id="f-tipo">
+          <option>Mini cruzeiro (3 e 4 noites)</option><option>Cruzeiro maior (5 noites ou mais)</option>
+        </select></label>
       </div>
-      <div class="campos par">
+      <div class="campos tri">
         <label>Quantas pessoas<select id="f-pessoas">
           <option>1</option><option selected>2</option><option>3</option><option>4</option><option>5 ou mais</option>
         </select></label>
         <label>Cabine<select id="f-cabine">
           <option>Interna</option><option>Externa</option><option>Varanda</option><option>Ainda não sei</option>
         </select></label>
+        <label class="nome">Seu nome<input type="text" id="f-nome" placeholder="Como você se chama?" autocomplete="name"></label>
       </div>
-      <div class="campos">
-        <label>Seu nome<input type="text" id="f-nome" placeholder="Como você se chama?" autocomplete="name"></label>
+      <div class="bebidas">
+        <span class="bebidas-rotulo">Pacote de bebidas</span>
+        <div class="opcoes" id="f-bebida">
+          <button type="button">Sem pacote de bebidas</button>
+          <button type="button">Bebidas não alcoólicas</button>
+          <button type="button">Pacote básico</button>
+          <button type="button">Pacote premium</button>
+          <button type="button" class="duvida">Quero entender a diferença entre eles</button>
+        </div>
       </div>
       <p class="erro" id="f-erro"></p>
       <button class="btn" id="f-enviar">Comparar pelo WhatsApp</button>
@@ -376,10 +398,19 @@
   }
   $('f-nome').oninput = function () { this.classList.remove('falta'); $('f-erro').textContent = ''; };
 
+  // Pacote de bebidas: escolha opcional, um botão por vez (clicar de novo desmarca).
+  var bebida = '';
+  $('f-bebida').onclick = function (ev) {
+    var b = ev.target.closest('button'); if (!b) return;
+    bebida = b.classList.contains('ativo') ? '' : b.textContent;
+    [].forEach.call(this.children, function (x) { x.classList.toggle('ativo', x === b && bebida !== ''); });
+  };
+
   $('f-enviar').onclick = function () {
     var nome = $('f-nome').value.trim(), texto;
     if (nome.length < 2) { erro('Escreva seu nome para a gente te atender.', $('f-nome')); return; }
-    var fim = '\nPessoas: ' + $('f-pessoas').value + '\nCabine: ' + $('f-cabine').value + '\nNome: ' + nome;
+    var fim = '\nPessoas: ' + $('f-pessoas').value + '\nCabine: ' + $('f-cabine').value +
+      (bebida ? '\nBebidas: ' + bebida : '') + '\nNome: ' + nome;
     if (aba === 'sei') {
       var d = ($('f-data').value || '|').split('|');
       if (!d[0]) { erro('Escolha o navio e a data.'); return; }
@@ -390,7 +421,8 @@
       var ini = $('f-inicio').value, ate = $('f-fim').value;
       if (!ini || !ate) { erro('Informe as duas datas.'); return; }
       if (ate <= ini) { erro('A data de volta precisa ser depois da data de ida.', $('f-fim')); return; }
-      texto = '[BF] Olá! Quero sugestões de cruzeiro na Black November:\nPeríodo: de ' + dataBr(ini) + ' a ' + dataBr(ate) + fim;
+      texto = '[BF] Olá! Quero sugestões de cruzeiro na Black November:\nPeríodo: de ' + dataBr(ini) + ' a ' + dataBr(ate) +
+        '\nTipo: ' + $('f-tipo').value + fim;
     }
     $('f-erro').textContent = '';
     window.open(linkWhats(texto), '_blank');
