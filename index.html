@@ -262,7 +262,7 @@
           <button type="button">Bebidas não alcoólicas</button>
           <button type="button">Pacote básico</button>
           <button type="button">Pacote premium</button>
-          <button type="button" class="duvida">Quero entender a diferença entre eles</button>
+          <button type="button" class="duvida ativo">Quero entender a diferença entre eles</button>
         </div>
       </div>
       <p class="erro" id="f-erro"></p>
@@ -402,7 +402,8 @@
   $('f-nome').oninput = function () { this.classList.remove('falta'); $('f-erro').textContent = ''; };
 
   // Pacote de bebidas: escolha opcional, um botão por vez (clicar de novo desmarca).
-  var bebida = '';
+  // Começa marcado em "Quero entender a diferença entre eles" (Leonardo, 22/10).
+  var bebida = 'Quero entender a diferença entre eles';
   $('f-bebida').onclick = function (ev) {
     var b = ev.target.closest('button'); if (!b) return;
     bebida = b.classList.contains('ativo') ? '' : b.textContent;
