@@ -299,13 +299,20 @@
 
   function desenhar() {
     var lista = validas();
-    function maisBaratos(id, filtro) {
-      var top = lista.filter(filtro).sort(function (a, b) { return a.atual[cabine] - b.atual[cabine] || (a.data < b.data ? -1 : 1); }).slice(0, 5);
+    // garantir (opcional): se nenhuma das 5 atender, a mais barata que atende entra no lugar da 5ª.
+    function maisBaratos(id, filtro, garantir) {
+      var ordem = lista.filter(filtro).sort(function (a, b) { return a.atual[cabine] - b.atual[cabine] || (a.data < b.data ? -1 : 1); });
+      var top = ordem.slice(0, 5);
+      if (garantir && top.length === 5 && !top.some(garantir)) {
+        var extra = ordem.filter(garantir)[0];
+        if (extra) top[4] = extra;
+      }
       $(id).innerHTML = top.map(function (s, k) { return card(s, k + 1, false); }).join('') ||
         '<div class="vazio">Sem preços nesta cabine hoje.</div>';
     }
     maisBaratos('mini', function (s) { return s.noites <= 4; });
-    maisBaratos('longos', function (s) { return s.noites >= 5; });
+    // 5 noites ou mais: sempre pelo menos uma para a Argentina (Leonardo, 22/10).
+    maisBaratos('longos', function (s) { return s.noites >= 5; }, function (s) { return /Buenos Aires/i.test(s.roteiro); });
 
     // Maior queda em % primeiro; empate (ex.: ninguém baixou ainda) = a mais barata primeiro.
     var quedas = lista.filter(function (s) { return s.base && s.base[cabine]; })
