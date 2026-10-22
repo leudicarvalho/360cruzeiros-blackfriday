@@ -61,6 +61,8 @@
   .preco { font-size: 22px; font-weight: 800; line-height: 1.15; }
   .preco small { display: block; font-size: 11px; color: var(--suave); font-weight: 500; }
   .pp { color: var(--suave); font-size: 12px; }
+  .compara { color: var(--suave); font-size: 12px; background: var(--fundo); border-radius: 6px; padding: 6px 8px; }
+  .tag.igual { background: rgba(161,161,170,.15); color: var(--suave); }
   .tag { align-self: flex-start; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: rgba(74,222,128,.15); color: var(--queda); }
   .btn { display: block; text-align: center; text-decoration: none; background: var(--verde); color: #fff; font-weight: 700; font-size: 14px; padding: 11px; border-radius: 8px; margin-top: auto; border: 0; cursor: pointer; font-family: inherit; width: 100%; }
   .btn:hover { background: var(--verde-escuro); }
@@ -120,7 +122,8 @@
 
   <section>
     <h2>As 5 saídas que mais baixaram</h2>
-    <p class="explica">Comparadas com o preço que registramos em 22/10.</p>
+    <p class="explica">Preço de hoje comparado com o que registramos em 22/10. Se ainda não baixou, aparecem as mais baratas.</p>
+    <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="quedas"></div>
   </section>
 
@@ -197,6 +200,10 @@
     return saidas.filter(function (s) { return s.data > hoje && !s.tematico && s.atual[cabine]; });
   }
 
+  // Quanto baixou desde 22/10, em % (0 = mesmo preço; negativo = subiu).
+  function queda(s) { var b = s.base && s.base[cabine]; return b ? (b - s.atual[cabine]) / b * 100 : 0; }
+  function pct(n) { return n.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + '%'; }
+
   function card(s, pos, mostrarQueda) {
     var atual = s.atual[cabine], antes = s.base && s.base[cabine], caiu = antes && atual < antes;
     var texto = '[BF] Olá! Vi a página da Black Friday e quero esse cruzeiro:\n' +
@@ -210,8 +217,11 @@
       '<span class="noites">' + s.noites + ' noites</span>' +
       '<span class="navio">' + esc(s.navio) + '</span>' +
       '<span class="rota">' + esc(roteiro(s)) + '</span>' +
-      (caiu ? '<span class="tag">Baixou ' + Math.round((1 - atual / antes) * 100) + '% (' + reais(antes - atual) + ')</span>' : '') +
-      (caiu ? '<span class="antes">22/10: ' + reais(antes) + '</span>' : '') +
+      (mostrarQueda && antes ?
+        '<span class="compara">22/10: ' + reais(antes) + '<br>Hoje: ' + reais(atual) + '</span>' +
+        '<span class="tag' + (caiu ? '' : ' igual') + '">' + (caiu ? 'Baixou ' + pct(queda(s)) + ' (' + reais(antes - atual) + ')' :
+          atual === antes ? 'Baixou 0%: mesmo preço' : 'Subiu ' + pct(-queda(s))) + '</span>' :
+        (caiu ? '<span class="tag">Baixou ' + pct(queda(s)) + ' (' + reais(antes - atual) + ')</span><span class="antes">22/10: ' + reais(antes) + '</span>' : '')) +
       '<span class="preco">' + reais(atual) + ' <small>2 pessoas</small></span>' +
       '<span class="pp">' + reais(Math.round(atual / 2)) + ' por pessoa, taxas inclusas</span>' +
       '<a class="btn" target="_blank" rel="noopener" href="' + linkWhats(texto) + '">Quero esse</a>' +
@@ -229,12 +239,11 @@
     maisBaratos('mini', function (s) { return s.noites <= 4; });
     maisBaratos('longos', function (s) { return s.noites >= 5; });
 
-    var quedas = lista.filter(function (s) { return s.base && s.base[cabine] && s.atual[cabine] < s.base[cabine]; })
-      .sort(function (a, b) {
-        return (b.base[cabine] - b.atual[cabine]) / b.base[cabine] - (a.base[cabine] - a.atual[cabine]) / a.base[cabine];
-      }).slice(0, 5);
+    // Maior queda em % primeiro; empate (ex.: ninguém baixou ainda) = a mais barata primeiro.
+    var quedas = lista.filter(function (s) { return s.base && s.base[cabine]; })
+      .sort(function (a, b) { return queda(b) - queda(a) || a.atual[cabine] - b.atual[cabine]; }).slice(0, 5);
     $('quedas').innerHTML = quedas.map(function (s, k) { return card(s, k + 1, true); }).join('') ||
-      '<div class="vazio">Nenhuma saída baixou de preço desde 22/10 nesta cabine ainda. Conferimos todo dia: volte amanhã.</div>';
+      '<div class="vazio">Sem preços nesta cabine hoje.</div>';
   }
 
   function preencherNavios() {
