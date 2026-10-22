@@ -208,7 +208,10 @@
   function preencherNavios() {
     var hoje = hojeIso(), porNavio = {};
     saidas.forEach(function (s) { if (s.data > hoje) (porNavio[s.navio] = porNavio[s.navio] || []).push(s); });
-    var nomes = Object.keys(porNavio).sort();
+    // MSC e Costa primeiro; os temáticos da Promoação no fim da lista.
+    var nomes = Object.keys(porNavio).sort(function (a, b) {
+      return porNavio[a][0].tematico - porNavio[b][0].tematico || a.localeCompare(b, 'pt-BR');
+    });
     $('f-navio').innerHTML = nomes.map(function (n) { return '<option>' + esc(n) + '</option>'; }).join('');
     function datas() {
       var l = porNavio[$('f-navio').value] || [];
