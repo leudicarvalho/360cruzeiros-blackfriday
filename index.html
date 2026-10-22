@@ -34,10 +34,20 @@
   @media (max-width: 420px) { .cabines { gap: 6px; } .cabines button { flex: 1; padding: 9px 4px; font-size: 13px; } }
   .cabines button.ativo { background: var(--ouro); border-color: var(--ouro); color: #000; }
 
-  section { margin-top: 36px; }
-  h2 { font-size: clamp(19px, 3.2vw, 22px); font-weight: 800; margin-bottom: 4px; }
-  .explica { color: var(--suave); font-size: 14px; margin-bottom: 14px; }
+  /* Cada bloco é um painel com cor própria: mini = ouro, 5+ noites = azul, quedas = verde, pesquisa = branco. */
+  section { margin-top: 28px; background: #131317; border: 1px solid var(--linha); border-top: 4px solid var(--cor); border-radius: 16px; padding: 22px 18px 20px; --cor: var(--ouro); }
+  section.longos { --cor: #38bdf8; }
+  section.quedas { --cor: var(--queda); }
+  section.pesquisa { --cor: #e4e4e7; text-align: center; }
+  .rotulo { display: inline-block; background: color-mix(in srgb, var(--cor) 16%, transparent); color: var(--cor); font-size: 12px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; }
+  h2 { font-size: clamp(24px, 4.4vw, 32px); font-weight: 800; line-height: 1.1; margin: 10px 0 6px; letter-spacing: -0.5px; }
+  h2 em { font-style: normal; color: var(--cor); }
+  .explica { color: var(--suave); font-size: 14px; margin-bottom: 16px; }
   .dica { display: none; color: var(--suave); font-size: 12px; margin: -8px 0 10px; }
+  section.pesquisa h2 em { color: var(--ouro); }
+  section.pesquisa .form { margin: 0 auto; text-align: left; background: #1d1d23; }
+  section .card { background: #1d1d23; }
+  section .card .data { color: var(--cor); }
 
   /* Celular: cartões em carrossel (arrasta para o lado), para a página não ficar comprida demais. */
   .grade { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; scrollbar-width: thin; }
@@ -106,29 +116,33 @@
     <button data-c="v">Varanda</button>
   </div>
 
-  <section>
-    <h2>Mini cruzeiros: os 5 menores preços de hoje</h2>
-    <p class="explica">De 2 a 4 noites. Valor total para 2 adultos, com taxas, na cabine escolhida acima.</p>
+  <section class="mini">
+    <span class="rotulo">Mini cruzeiros · 3 e 4 noites</span>
+    <h2><em>5</em> menores preços de hoje</h2>
+    <p class="explica">Valor total para 2 adultos, com taxas, na cabine escolhida acima.</p>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="mini"></div>
   </section>
 
-  <section>
-    <h2>Cruzeiros de 5 noites ou mais: os 5 menores preços de hoje</h2>
+  <section class="longos">
+    <span class="rotulo">Cruzeiros de 5 noites ou mais</span>
+    <h2><em>5</em> menores preços de hoje</h2>
     <p class="explica">Valor total para 2 adultos, com taxas, na cabine escolhida acima.</p>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="longos"></div>
   </section>
 
-  <section>
-    <h2>As 5 saídas que mais baixaram</h2>
+  <section class="quedas">
+    <span class="rotulo">Comparação com 22 de outubro</span>
+    <h2><em>5</em> saídas que mais baixaram</h2>
     <p class="explica">Preço de hoje comparado com o que registramos em 22/10. Se ainda não baixou, aparecem as mais baratas.</p>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="quedas"></div>
   </section>
 
-  <section>
-    <h2>Quer comparar outro cruzeiro?</h2>
+  <section class="pesquisa">
+    <span class="rotulo">Pesquisa pelo WhatsApp</span>
+    <h2>Quer comparar <em>outro cruzeiro?</em></h2>
     <p class="explica">Conte o que você procura. A gente confere o preço e te responde no WhatsApp.</p>
     <div class="form">
       <div class="abas" id="abas">
