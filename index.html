@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Página da Black Friday 360cruzeiros, publicada em https://leudicarvalho.github.io/360cruzeiros-blackfriday/
+<!-- Página da Black November 360cruzeiros, publicada em https://leudicarvalho.github.io/360cruzeiros-blackfriday/
      O Wix mostra este endereço num bloco "Incorporar um site": mudar esta página ou os preços (precos.json)
      e dar push basta, sem mexer no Wix. -->
 <html lang="pt-BR">
@@ -93,9 +93,9 @@
 <body>
 <div class="wrap">
   <header class="topo">
-    <span class="selo">BLACK FRIDAY</span>
+    <span class="selo">BLACK NOVEMBER</span>
     <h1>Cruzeiros saindo de <span>Santos</span></h1>
-    <p class="sub">Todo dia conferimos o preço de cada saída e comparamos com o preço de 22 de outubro. Aqui, desconto de Black Friday é de verdade.</p>
+    <p class="sub">Todo dia conferimos o preço de cada saída e comparamos com o preço de 22 de outubro. Aqui, desconto de Black November é de verdade.</p>
     <div class="contagem" id="contagem"></div>
     <p class="atualizado" id="atualizado">Carregando preços...</p>
   </header>
@@ -166,7 +166,7 @@
 (function () {
   var WHATS = '5582993258783';
   var DADOS = 'precos.json';   // mesmo endereço da página; já vem pré-carregado pelo <link rel="preload">
-  var BLACK_FRIDAY = new Date('2026-11-27T00:00:00-03:00');
+  var FIM_BLACK_NOVEMBER = new Date('2026-12-01T00:00:00-03:00');   // fim do dia 30/11
   var NOME_CABINE = { i: 'Interna', e: 'Externa', v: 'Varanda' };
   var MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
   var cabine = 'i', saidas = [];
@@ -187,8 +187,8 @@
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   function contagem() {
-    var falta = BLACK_FRIDAY - Date.now();
-    if (falta <= 0) { $('contagem').innerHTML = '<div><b>É hoje!</b><small>Black Friday</small></div>'; return; }
+    var falta = FIM_BLACK_NOVEMBER - Date.now();
+    if (falta <= 0) { $('contagem').innerHTML = '<div><b>Encerrada</b><small>Black November</small></div>'; return; }
     var d = Math.floor(falta / 864e5), h = Math.floor(falta / 36e5) % 24, m = Math.floor(falta / 6e4) % 60;
     $('contagem').innerHTML = '<div><b>' + d + '</b><small>dias</small></div><div><b>' + h + '</b><small>horas</small></div><div><b>' + m + '</b><small>min</small></div>';
   }
@@ -206,7 +206,7 @@
 
   function card(s, pos, mostrarQueda) {
     var atual = s.atual[cabine], antes = s.base && s.base[cabine], caiu = antes && atual < antes;
-    var texto = '[BF] Olá! Vi a página da Black Friday e quero esse cruzeiro:\n' +
+    var texto = '[BF] Olá! Vi a página da Black November e quero esse cruzeiro:\n' +
       s.navio + ', de ' + dataBr(s.data) + ' a ' + dataBr(volta(s)) + ', ' + s.noites + ' noites (' + roteiro(s) + ')\n' +
       'Cabine ' + NOME_CABINE[cabine] + ': ' + reais(atual) + ' para 2 pessoas';
     var alerta = '[BF-ALERTA] Olá! Quero ser avisado se este cruzeiro baixar de preço:\n' +
@@ -294,13 +294,13 @@
       var d = ($('f-data').value || '|').split('|');
       if (!d[0]) { erro('Escolha o navio e a data.'); return; }
       var s = { data: d[0], noites: +d[1] };
-      texto = '[BF] Olá! Quero comparar o preço deste cruzeiro na Black Friday:\nNavio: ' + $('f-navio').value +
+      texto = '[BF] Olá! Quero comparar o preço deste cruzeiro na Black November:\nNavio: ' + $('f-navio').value +
         '\nSaída: de ' + dataBr(s.data) + ' a ' + dataBr(volta(s)) + ', ' + s.noites + ' noites' + fim;
     } else {
       var ini = $('f-inicio').value, ate = $('f-fim').value;
       if (!ini || !ate) { erro('Informe as duas datas.'); return; }
       if (ate <= ini) { erro('A data de volta precisa ser depois da data de ida.', $('f-fim')); return; }
-      texto = '[BF] Olá! Quero sugestões de cruzeiro na Black Friday:\nPeríodo: de ' + dataBr(ini) + ' a ' + dataBr(ate) + fim;
+      texto = '[BF] Olá! Quero sugestões de cruzeiro na Black November:\nPeríodo: de ' + dataBr(ini) + ' a ' + dataBr(ate) + fim;
     }
     $('f-erro').textContent = '';
     window.open(linkWhats(texto), '_blank');
