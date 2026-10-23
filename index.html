@@ -98,6 +98,11 @@
   @media (max-width: 420px) { .rotulo { font-size: 14px; letter-spacing: 1px; padding: 8px 14px; } }
   h2 { font-size: clamp(24px, 4.4vw, 32px); font-weight: 800; line-height: 1.1; margin: 10px 0 6px; letter-spacing: -0.5px; }
   h2 em { font-style: normal; color: var(--cor); }
+  /* Título e aviso da base na mesma linha no computador; no celular o aviso desce (Leonardo, 23/10). */
+  .titulo { display: flex; align-items: center; justify-content: space-between; gap: 10px 20px; flex-wrap: wrap; margin: 10px 0 6px; }
+  .titulo h2 { margin: 0; }
+  .titulo .base { flex: 0 1 470px; margin: 0; }
+  @media (max-width: 699px) { .titulo .base { flex-basis: 100%; } }
   .explica { color: var(--suave); font-size: 14px; margin-bottom: 16px; }
   .dica { display: none; color: var(--suave); font-size: 12px; margin: -8px 0 10px; }
   section.pesquisa h2 em { color: var(--ouro); }
@@ -215,9 +220,9 @@
 
   <section class="mini">
     <span class="rotulo">Mini cruzeiros · 3 e 4 noites</span>
-    <h2><em>5</em> menores preços de hoje</h2>
+    <div class="titulo"><h2><em>5</em> menores preços de hoje</h2>
+      <p class="caixa base"><span><b>Preço para 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente calcula o valor certinho para você.</span></p></div>
     <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total com taxas, na cabine escolhida acima.</p>
-    <p class="caixa base"><span><b>Preço para 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente calcula o valor certinho para você.</span></p>
     <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="mini"></div>
@@ -225,9 +230,9 @@
 
   <section class="longos">
     <span class="rotulo">Cruzeiros de 5 noites ou mais</span>
-    <h2><em>5</em> menores preços de hoje</h2>
+    <div class="titulo"><h2><em>5</em> menores preços de hoje</h2>
+      <p class="caixa base"><span><b>Preço para 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente calcula o valor certinho para você.</span></p></div>
     <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total com taxas, na cabine escolhida acima.</p>
-    <p class="caixa base"><span><b>Preço para 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente calcula o valor certinho para você.</span></p>
     <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="longos"></div>
@@ -235,9 +240,9 @@
 
   <section class="quedas">
     <span class="rotulo">Comparação com os preços de outubro</span>
-    <h2><em>5</em> saídas que mais baixaram</h2>
+    <div class="titulo"><h2><em>5</em> saídas que mais baixaram</h2>
+      <p class="caixa base"><span><b>Base da comparação: 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente te mostra quanto era em 22/10.</span></p></div>
     <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Preço de hoje comparado com o que registramos em 22/10.</p>
-    <p class="caixa base"><span><b>Base da comparação: 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente te mostra quanto era em 22/10.</span></p>
     <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="quedas"></div>
