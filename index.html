@@ -62,6 +62,9 @@
   .info { background: rgba(126,232,250,.10); border: 1px solid rgba(126,232,250,.5); }
   .info b { color: var(--ciano); }
   .info::before { content: '✓'; background: var(--ciano); color: var(--fundo); }
+  .base { background: rgba(248,196,99,.10); border: 1px solid rgba(248,196,99,.5); max-width: 640px; margin: 12px auto 0; }
+  .base b { color: var(--ouro); }
+  .base::before { content: 'i'; background: var(--ouro); color: var(--fundo); font-family: Georgia, serif; }
   .aviso { background: rgba(232,65,24,.16); border: 1px solid rgba(232,65,24,.6); }
   .aviso b { color: #ff9b7d; }
   .aviso::before { content: '!'; background: var(--alerta); color: #fff; }
@@ -215,6 +218,8 @@
     <button data-c="e">Externa</button>
     <button data-c="v">Varanda</button>
   </div>
+  <!-- Aviso da base (Leonardo, 23/10): a página compara sempre 2 adultos sem bebidas; pessoas e pacote se ajustam no WhatsApp. -->
+  <p class="caixa base"><span><b>Base da comparação: 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente ajusta e mostra quanto era em 22/10.</span></p>
 
   <section class="mini">
     <span class="rotulo">Mini cruzeiros · 3 e 4 noites</span>
