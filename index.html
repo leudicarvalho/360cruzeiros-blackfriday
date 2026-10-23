@@ -202,7 +202,7 @@
     </div>
   </header>
 
-  <!-- Filtro principal (Leonardo, 23/10): Todos ou até 2 entre MSC, Costa e Temáticos; vale para os 3 blocos. -->
+  <!-- Filtro principal (Leonardo, 23/10): Todos, ou uma ou mais entre MSC, Costa e Temáticos; vale para os 3 blocos. -->
   <div class="cias" id="cias">
     <button data-k="todos" class="ativo">Todos</button>
     <button data-k="MSC">MSC</button>
@@ -317,7 +317,7 @@
     $('contagem').innerHTML = '<div><b>' + d + '</b><small>dias</small></div><div><b>' + h + '</b><small>horas</small></div><div><b>' + m + '</b><small>min</small></div>';
   }
 
-  // Filtro de companhia: vazio = Todos (MSC, Costa e temáticos da Promoação); senão até 2 entre MSC, Costa e tematico.
+  // Filtro de companhia: vazio = Todos (MSC, Costa e temáticos da Promoação); senão as marcadas entre MSC, Costa e tematico.
   var cias = [];
   function chave(s) { return s.tematico ? 'tematico' : s.cia; }
 
@@ -403,14 +403,13 @@
     datas();
   }
 
-  // Todos sozinho, ou 1 a 2 companhias; marcar a 3ª ou desmarcar a última volta para Todos.
+  // Todos sozinho, ou 1 a 3 companhias (as 3 ficam marcadas, sem trocar para Todos; Leonardo, 23/10); desmarcar a última volta para Todos.
   $('cias').onclick = function (ev) {
     var b = ev.target.closest('button'); if (!b) return;
     var k = b.dataset.k, i = cias.indexOf(k);
     if (k === 'todos') cias = [];
     else if (i >= 0) cias.splice(i, 1);
     else cias.push(k);
-    if (cias.length > 2) cias = [];
     [].forEach.call(this.children, function (x) {
       x.classList.toggle('ativo', x.dataset.k === 'todos' ? !cias.length : cias.indexOf(x.dataset.k) >= 0);
     });
