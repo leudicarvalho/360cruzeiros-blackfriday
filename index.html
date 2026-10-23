@@ -62,7 +62,8 @@
   .info { background: rgba(126,232,250,.10); border: 1px solid rgba(126,232,250,.5); }
   .info b { color: var(--ciano); }
   .info::before { content: '✓'; background: var(--ciano); color: var(--fundo); }
-  .base { background: rgba(248,196,99,.10); border: 1px solid rgba(248,196,99,.5); max-width: 640px; margin: 12px auto 0; }
+  /* Aviso da base em cada bloco (Leonardo, 23/10): 1º e 2º = preço para 2 sem bebidas; 3º = base da comparação. */
+  .base { background: rgba(248,196,99,.10); border: 1px solid rgba(248,196,99,.5); margin: 0 0 12px; }
   .base b { color: var(--ouro); }
   .base::before { content: 'i'; background: var(--ouro); color: var(--fundo); font-family: Georgia, serif; }
   .aviso { background: rgba(232,65,24,.16); border: 1px solid rgba(232,65,24,.6); }
@@ -211,13 +212,12 @@
     <button data-c="e">Externa</button>
     <button data-c="v">Varanda</button>
   </div>
-  <!-- Aviso da base (Leonardo, 23/10): a página compara sempre 2 adultos sem bebidas; pessoas e pacote se ajustam no WhatsApp. -->
-  <p class="caixa base"><span><b>Base da comparação: 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente te mostra quanto era em 22/10.</span></p>
 
   <section class="mini">
     <span class="rotulo">Mini cruzeiros · 3 e 4 noites</span>
     <h2><em>5</em> menores preços de hoje</h2>
-    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total para 2 adultos, com taxas, na cabine escolhida acima.</p>
+    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total com taxas, na cabine escolhida acima.</p>
+    <p class="caixa base"><span><b>Preço para 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente calcula o valor certinho para você.</span></p>
     <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="mini"></div>
@@ -226,7 +226,8 @@
   <section class="longos">
     <span class="rotulo">Cruzeiros de 5 noites ou mais</span>
     <h2><em>5</em> menores preços de hoje</h2>
-    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total para 2 adultos, com taxas, na cabine escolhida acima.</p>
+    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total com taxas, na cabine escolhida acima.</p>
+    <p class="caixa base"><span><b>Preço para 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente calcula o valor certinho para você.</span></p>
     <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="longos"></div>
@@ -236,6 +237,7 @@
     <span class="rotulo">Comparação com os preços de outubro</span>
     <h2><em>5</em> saídas que mais baixaram</h2>
     <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Preço de hoje comparado com o que registramos em 22/10.</p>
+    <p class="caixa base"><span><b>Base da comparação: 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente te mostra quanto era em 22/10.</span></p>
     <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="quedas"></div>
