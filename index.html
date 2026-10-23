@@ -77,10 +77,11 @@
     .caixas { grid-template-columns: 1fr 1fr; gap: 24px; }
   }
 
-  .cias { display: flex; justify-content: center; gap: 8px; margin: 18px 0 0; flex-wrap: wrap; }
-  .cias button { background: transparent; color: var(--texto); border: 2px solid var(--linha); border-radius: 10px; padding: 10px 20px; font: 800 15px var(--fonte); cursor: pointer; white-space: nowrap; }
-  .cias button.ativo { border-color: var(--ouro); background: rgba(248, 196, 99, .14); color: var(--ouro); }
-  @media (max-width: 420px) { .cias { gap: 6px; flex-wrap: nowrap; } .cias button { flex: 1; padding: 10px 4px; font-size: 13px; } }
+  /* Filtro de companhia dentro de cada bloco, na cor do bloco (os 3 andam juntos). */
+  .cias { display: flex; gap: 6px; margin: -6px 0 14px; flex-wrap: wrap; }
+  .cias button { background: transparent; color: var(--texto); border: 1px solid var(--linha); border-radius: 999px; padding: 6px 14px; font: 700 13px var(--fonte); cursor: pointer; white-space: nowrap; }
+  .cias button.ativo { border-color: var(--cor, var(--ouro)); background: color-mix(in srgb, var(--cor, var(--ouro)) 18%, transparent); color: var(--cor, var(--ouro)); }
+  @media (max-width: 420px) { .cias { flex-wrap: nowrap; } .cias button { flex: 1; padding: 7px 2px; font-size: 12px; } }
   .cabines { display: flex; justify-content: center; gap: 8px; margin: 16px 0 4px; }
   .cabines button { background: transparent; color: var(--texto); border: 1px solid var(--linha); border-radius: 999px; padding: 9px 18px; font: 700 14px var(--fonte); cursor: pointer; white-space: nowrap; }
   @media (max-width: 420px) { .cabines { gap: 6px; } .cabines button { flex: 1; padding: 9px 4px; font-size: 13px; } }
@@ -205,14 +206,6 @@
     </div>
   </header>
 
-  <!-- Filtro principal (Leonardo, 23/10): Todos, ou uma ou mais entre MSC, Costa e Temáticos; vale para os 3 blocos. -->
-  <div class="cias" id="cias">
-    <button data-k="todos" class="ativo">Todos</button>
-    <button data-k="MSC">MSC</button>
-    <button data-k="Costa">Costa</button>
-    <button data-k="tematico">Temáticos</button>
-  </div>
-
   <div class="cabines" id="cabines">
     <button data-c="i" class="ativo">Interna</button>
     <button data-c="e">Externa</button>
@@ -225,6 +218,7 @@
     <span class="rotulo">Mini cruzeiros · 3 e 4 noites</span>
     <h2><em>5</em> menores preços de hoje</h2>
     <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total para 2 adultos, com taxas, na cabine escolhida acima.</p>
+    <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="mini"></div>
   </section>
@@ -233,6 +227,7 @@
     <span class="rotulo">Cruzeiros de 5 noites ou mais</span>
     <h2><em>5</em> menores preços de hoje</h2>
     <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total para 2 adultos, com taxas, na cabine escolhida acima.</p>
+    <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="longos"></div>
   </section>
@@ -241,6 +236,7 @@
     <span class="rotulo">Comparação com os preços de outubro</span>
     <h2><em>5</em> saídas que mais baixaram</h2>
     <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Preço de hoje comparado com o que registramos em 22/10.</p>
+    <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="quedas"></div>
   </section>
@@ -354,7 +350,7 @@
       (mostrarQueda && antes ?
         '<div class="c-queda"><span class="compara">22/10: ' + reais(antes) + '<br>Hoje: ' + reais(atual) + '</span>' +
         '<span class="tag' + (caiu ? '' : ' igual') + '">' + (caiu ? 'Baixou ' + pct(queda(s)) + ' (' + reais(antes - atual) + ')' :
-          atual === antes ? 'Baixou 0%: mesmo preço' : 'Subiu ' + pct(-queda(s))) + '</span></div>' :
+          atual === antes ? 'Mesmo preço' : 'Subiu ' + pct(-queda(s))) + '</span></div>' :
         (caiu ? '<div class="c-queda"><span class="tag">Baixou ' + pct(queda(s)) + ' (' + reais(antes - atual) + ')</span><span class="antes">22/10: ' + reais(antes) + '</span></div>' : '')) +
       '<div class="c-preco"><span class="preco">' + reais(atual) + '</span>' +
         '<span class="pp">2 pessoas · ' + reais(Math.round(atual / 2)) + ' cada, taxas inclusas</span></div>' +
@@ -408,18 +404,21 @@
     datas();
   }
 
-  // Todos sozinho, ou 1 a 3 companhias (as 3 ficam marcadas, sem trocar para Todos; Leonardo, 23/10); desmarcar a última volta para Todos.
-  $('cias').onclick = function (ev) {
-    var b = ev.target.closest('button'); if (!b) return;
-    var k = b.dataset.k, i = cias.indexOf(k);
-    if (k === 'todos') cias = [];
-    else if (i >= 0) cias.splice(i, 1);
-    else cias.push(k);
-    [].forEach.call(this.children, function (x) {
-      x.classList.toggle('ativo', x.dataset.k === 'todos' ? !cias.length : cias.indexOf(x.dataset.k) >= 0);
-    });
-    desenhar();
-  };
+  // Filtro repetido em cada bloco, sempre igual nos 3: mudar um muda todos (Leonardo, 23/10).
+  // Todos sozinho, ou 1 a 3 companhias (as 3 ficam marcadas, sem trocar para Todos); desmarcar a última volta para Todos.
+  [].forEach.call(document.querySelectorAll('.cias'), function (filtro) {
+    filtro.onclick = function (ev) {
+      var b = ev.target.closest('button'); if (!b) return;
+      var k = b.dataset.k, i = cias.indexOf(k);
+      if (k === 'todos') cias = [];
+      else if (i >= 0) cias.splice(i, 1);
+      else cias.push(k);
+      [].forEach.call(document.querySelectorAll('.cias button'), function (x) {
+        x.classList.toggle('ativo', x.dataset.k === 'todos' ? !cias.length : cias.indexOf(x.dataset.k) >= 0);
+      });
+      desenhar();
+    };
+  });
 
   $('cabines').onclick = function (ev) {
     var b = ev.target.closest('button'); if (!b) return;
