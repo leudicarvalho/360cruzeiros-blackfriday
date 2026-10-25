@@ -172,7 +172,9 @@
   @media (max-width: 420px) { .abas button { font-size: 13px; padding: 10px 6px; } }
   .erro { color: var(--alta); font-size: 13px; font-weight: 700; margin: -4px 0 10px; min-height: 0; }
   .erro:empty { display: none; }
-  input.falta, select.falta { border-color: var(--alta); }
+  /* Campo errado em destaque vermelho (Leonardo, 25/10): na hora em que o cliente sai do campo e ao enviar. */
+  input.falta, select.falta, .form input:invalid { border-color: var(--alta); box-shadow: 0 0 0 2px rgba(248,113,113,.35); }
+  input.falta:focus, select.falta:focus, .form input:invalid:focus { outline: 2px solid var(--alta); outline-offset: 1px; }
   select:disabled { opacity: .5; cursor: not-allowed; }
   label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--suave); }
   select, input { background: var(--fundo); color: var(--texto); border: 1px solid var(--linha); border-radius: 8px; padding: 11px; font: 500 15px var(--fonte); width: 100%; color-scheme: dark; }
@@ -549,7 +551,27 @@
     $('f-erro').textContent = msg;
     if (campo) { campo.classList.add('falta'); campo.focus(); }
   }
-  ['f-nome', 'f-whats', 'f-email'].forEach(function (id) { $(id).oninput = function () { this.classList.remove('falta'); $('f-erro').textContent = ''; }; });
+  ['f-nome', 'f-whats', 'f-email', 'f-inicio', 'f-fim'].forEach(function (id) { $(id).oninput = function () { this.classList.remove('falta'); $('f-erro').textContent = ''; }; });
+
+  // Datas das sugestões: só de hoje até a última saída da página; data inválida ou fora disso fica em vermelho com o motivo.
+  function problemaData(el, nome) {
+    if (el.validity && el.validity.badInput) return 'A data em "' + nome + '" não existe. Confira o dia e o mês.';
+    if (!el.value) return 'Preencha "' + nome + '".';
+    if (el.value < hojeIso()) return 'A data em "' + nome + '" já passou. Escolha um dia a partir de hoje.';
+    if (el.value > ULTIMA_SAIDA) return 'A data em "' + nome + '" precisa ser até ' + dataBr(ULTIMA_SAIDA) + '.';
+    return '';
+  }
+  $('f-inicio').min = $('f-fim').min = hojeIso();
+  [['f-inicio', 'Posso viajar a partir de'], ['f-fim', 'Preciso voltar até']].forEach(function (c) {
+    $(c[0]).onchange = $(c[0]).onblur = function () {
+      var p = (this.value || (this.validity && this.validity.badInput)) ? problemaData(this, c[1]) : '';
+      if (p) erro(p, null), this.classList.add('falta'); else this.classList.remove('falta');
+    };
+  });
+  // WhatsApp e e-mail: avisa ao sair do campo, sem esperar o envio.
+  $('f-whats').onblur = function () { if (this.value.trim() && !whatsLimpo(this.value)) { erro('O WhatsApp precisa ter DDD + número, ex.: (11) 99999-9999.'); this.classList.add('falta'); } };
+  $('f-email').onblur = function () { if (this.value.trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(this.value.trim())) { erro('Esse e-mail parece incompleto. Confira, ex.: voce@email.com.'); this.classList.add('falta'); } };
+  $('j-whats').onblur = function () { if (this.value.trim() && !whatsLimpo(this.value)) { $('j-erro').textContent = 'O WhatsApp precisa ter DDD + número, ex.: (11) 99999-9999.'; this.classList.add('falta'); } };
   (function () { var c = lembrado(); $('f-nome').value = c.nome || ''; $('f-whats').value = c.whats || ''; })();
 
   // Bebidas saíram do formulário (Leonardo, 24/10): a pergunta das bebidas é a da Qualificação, igual para todos.
@@ -568,7 +590,9 @@
       dados.pedido = 'do ' + dados.navio + ', de ' + diaMes(ida) + ' a ' + diaMes(fim) + comCabine;
     } else {
       var ini = $('f-inicio').value, ate = $('f-fim').value;
-      if (!ini || !ate) { erro('Informe as duas datas.'); return; }
+      var pIni = problemaData($('f-inicio'), 'Posso viajar a partir de'), pFim = problemaData($('f-fim'), 'Preciso voltar até');
+      if (pIni) { erro(pIni, $('f-inicio')); return; }
+      if (pFim) { erro(pFim, $('f-fim')); return; }
       if (ate <= ini) { erro('A data de volta precisa ser depois da data de ida.', $('f-fim')); return; }
       dados.origem = 'Quero sugestões';
       dados.periodo = dataBr(ini) + ' a ' + dataBr(ate);
