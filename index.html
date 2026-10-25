@@ -172,7 +172,8 @@
   @media (max-width: 420px) { .abas button { font-size: 13px; padding: 10px 6px; } }
   .erro { color: var(--alta); font-size: 13px; font-weight: 700; margin: -4px 0 10px; min-height: 0; }
   .erro:empty { display: none; }
-  input.falta { border-color: var(--alta); }
+  input.falta, select.falta { border-color: var(--alta); }
+  select:disabled { opacity: .5; cursor: not-allowed; }
   label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--suave); }
   select, input { background: var(--fundo); color: var(--texto); border: 1px solid var(--linha); border-radius: 8px; padding: 11px; font: 500 15px var(--fonte); width: 100%; color-scheme: dark; }
   .oculto { display: none; }
@@ -496,14 +497,19 @@
     var nomes = Object.keys(porNavio).sort(function (a, b) {
       return porNavio[a][0].tematico - porNavio[b][0].tematico || a.localeCompare(b, 'pt-BR');
     });
-    $('f-navio').innerHTML = nomes.map(function (n) { return '<option>' + esc(n) + '</option>'; }).join('');
+    // Navio e data começam vazios, para o cliente escolher; a data só libera depois do navio (Leonardo, 25/10).
+    $('f-navio').innerHTML = '<option value="" selected disabled>Selecione o navio</option>' +
+      nomes.map(function (n) { return '<option>' + esc(n) + '</option>'; }).join('');
     function datas() {
       var l = porNavio[$('f-navio').value] || [];
-      $('f-data').innerHTML = l.map(function (s) {
-        return '<option value="' + s.data + '|' + s.noites + '">' + dataBr(s.data).slice(0, 5) + ' a ' + dataBr(volta(s)) + ' · ' + s.noites + ' noites · ' + esc(roteiro(s)) + '</option>';
-      }).join('');
+      $('f-data').disabled = !l.length;
+      $('f-data').innerHTML = '<option value="" selected disabled>' + (l.length ? 'Selecione a data' : 'Escolha o navio primeiro') + '</option>' +
+        l.map(function (s) {
+          return '<option value="' + s.data + '|' + s.noites + '">' + dataBr(s.data).slice(0, 5) + ' a ' + dataBr(volta(s)) + ' · ' + s.noites + ' noites · ' + esc(roteiro(s)) + '</option>';
+        }).join('');
     }
-    $('f-navio').onchange = datas;
+    $('f-navio').onchange = function () { this.classList.remove('falta'); $('f-erro').textContent = ''; datas(); };
+    $('f-data').onchange = function () { this.classList.remove('falta'); $('f-erro').textContent = ''; };
     datas();
   }
 
@@ -553,7 +559,8 @@
     var dados = { nome: nome, whatsapp: whats, email: email, cabine: cab, pessoas: $('f-pessoas').value };
     if (aba === 'sei') {
       var d = ($('f-data').value || '|').split('|');
-      if (!d[0]) { erro('Escolha o navio e a data.'); return; }
+      if (!$('f-navio').value) { erro('Escolha o navio.', $('f-navio')); return; }
+      if (!d[0]) { erro('Escolha a data de saída.', $('f-data')); return; }
       var s = { data: d[0], noites: +d[1] }, ida = dataBr(s.data), fim = dataBr(volta(s));
       dados.origem = 'Já sei o cruzeiro';
       dados.navio = $('f-navio').value;
