@@ -255,6 +255,7 @@
       <p class="caixa base"><span><b>Base da comparação: 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente te mostra quanto era em 22/10.</span></p></div>
     <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Preço de hoje comparado com o que registramos em 22/10.</p>
     <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
+    <div class="cias dur" id="duracao"><button data-d="" class="ativo">Todos</button><button data-d="mini">Mini cruzeiros</button><button data-d="longo">5 noites ou mais</button></div>
     <p class="dica">Arraste para o lado para ver todos →</p>
     <div class="grade" id="quedas"></div>
   </section>
@@ -326,7 +327,10 @@
   // Páginas do anúncio de novembro (Lead Ads, Leonardo 26/10): mini/ e longo/ são cópias desta página
   // (blackfriday/montar-modos.ps1) e mostram só aquele tipo de cruzeiro; a raiz mostra tudo.
   var MODO = /\/mini\/(index\.html)?$/.test(location.pathname) ? 'mini' : /\/longo\/(index\.html)?$/.test(location.pathname) ? 'longo' : '';
-  function doModo(s) { return MODO === 'mini' ? s.noites <= 4 : MODO === 'longo' ? s.noites >= 5 : true; }
+  function doTipo(s, t) { return t === 'mini' ? s.noites <= 4 : t === 'longo' ? s.noites >= 5 : true; }
+  function doModo(s) { return doTipo(s, MODO); }
+  // Duração no bloco de quedas da página principal: Todos, Mini cruzeiros ou 5 noites ou mais (Leonardo, 26/10).
+  var duracao = '';
   var DADOS = (MODO ? '../' : '') + 'precos.json';   // um arquivo só para as 3 páginas; já vem pré-carregado pelo <link rel="preload">
   var FIM_BLACK_NOVEMBER = new Date('2026-12-01T00:00:00-03:00');   // fim do dia 30/11
   var ULTIMA_SAIDA = '2027-04-30';   // a página mostra só saídas até abril de 2027 (Leonardo, 22/10)
@@ -490,7 +494,7 @@
     maisBaratos('longos', function (s) { return s.noites >= 5; }, function (s) { return /Buenos Aires/i.test(s.roteiro); });
 
     // Maior queda em % primeiro; empate (ex.: ninguém baixou ainda) = a mais barata primeiro.
-    var quedas = lista.filter(function (s) { return s.base && s.base[cabine]; })
+    var quedas = lista.filter(function (s) { return s.base && s.base[cabine] && doTipo(s, duracao); })
       .sort(function (a, b) { return queda(b) - queda(a) || a.atual[cabine] - b.atual[cabine]; }).slice(0, 5);
     $('quedas').innerHTML = quedas.map(function (s, k) { return card(s, k + 1, true); }).join('') ||
       vazio();
@@ -521,19 +525,26 @@
 
   // Filtro repetido em cada bloco, sempre igual nos 3: mudar um muda todos (Leonardo, 23/10).
   // Todos sozinho, ou 1 a 3 companhias (as 3 ficam marcadas, sem trocar para Todos); desmarcar a última volta para Todos.
-  [].forEach.call(document.querySelectorAll('.cias'), function (filtro) {
+  [].forEach.call(document.querySelectorAll('.cias:not(.dur)'), function (filtro) {
     filtro.onclick = function (ev) {
       var b = ev.target.closest('button'); if (!b) return;
       var k = b.dataset.k, i = cias.indexOf(k);
       if (k === 'todos') cias = [];
       else if (i >= 0) cias.splice(i, 1);
       else cias.push(k);
-      [].forEach.call(document.querySelectorAll('.cias button'), function (x) {
+      [].forEach.call(document.querySelectorAll('.cias:not(.dur) button'), function (x) {
         x.classList.toggle('ativo', x.dataset.k === 'todos' ? !cias.length : cias.indexOf(x.dataset.k) >= 0);
       });
       desenhar();
     };
   });
+
+  $('duracao').onclick = function (ev) {
+    var b = ev.target.closest('button'); if (!b) return;
+    duracao = b.dataset.d;
+    [].forEach.call(this.children, function (x) { x.classList.toggle('ativo', x === b); });
+    desenhar();
+  };
 
   $('cabines').onclick = function (ev) {
     var b = ev.target.closest('button'); if (!b) return;
@@ -624,6 +635,7 @@
   if (MODO) {
     document.querySelector(MODO === 'mini' ? 'section.longos' : 'section.mini').classList.add('oculto');
     $('f-tipo').selectedIndex = MODO === 'mini' ? 0 : 1;
+    $('duracao').classList.add('oculto');   // as quedas já vêm só do tipo da página
   }
 
   contagem();
