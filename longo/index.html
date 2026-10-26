@@ -1,0 +1,645 @@
+<!doctype html>
+<!-- Página da Black November 360cruzeiros, publicada em https://leudicarvalho.github.io/360cruzeiros-blackfriday/
+     O Wix mostra este endereço num bloco "Incorporar um site": mudar esta página ou os preços (precos.json)
+     e dar push basta, sem mexer no Wix. -->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preload" href="../precos.json" as="fetch" crossorigin>
+<link rel="preconnect" href="https://static.wixstatic.com" crossorigin>
+<link rel="preload" as="image" href="https://static.wixstatic.com/media/c17eb2_48f6acdc40cc445b941835be15115c99~mv2.jpg">
+<style>
+  /* Identidade 360cruzeiros (mesma da página de entrada no Wix): azul-petróleo escuro, dourado, foto do navio no topo. */
+  :root {
+    --fundo: #07161d; --card: #0f2a35; --linha: #1e4250; --texto: #ffffff; --suave: #9fb6bf;
+    --ouro: #f8c463; --ouro-escuro: #e8a635; --verde: #25d366; --verde-escuro: #1da851; --queda: #4ade80; --alta: #f87171;
+    --alerta: #e84118; --ciano: #7ee8fa;
+    --fonte: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--fundo); color: var(--texto); font-family: var(--fonte); line-height: 1.4; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px 40px; }
+
+  /* Topo compacto (pedido do Leonardo, 22/10): quem abre já vê as promoções logo abaixo. */
+  .topo { position: relative; margin: 0 -16px 4px; padding: 12px 20px 18px; border-radius: 0 0 24px 24px; overflow: hidden;
+    background: linear-gradient(160deg, rgba(7,22,29,.9) 0%, rgba(10,30,40,.8) 50%, rgba(15,46,58,.92) 100%),
+      url('https://static.wixstatic.com/media/c17eb2_48f6acdc40cc445b941835be15115c99~mv2.jpg') center/cover no-repeat; }
+  .topo::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(248,196,99,.6), transparent); }
+  /* Topo em 3 linhas (Leonardo, 22/10), com as mesmas bordas à esquerda e à direita:
+     1) logo + selo BLACK NOVEMBER | quando os preços foram conferidos;
+     2) título numa linha só | contador (mesma altura);
+     3) caixa de info | caixa de aviso, lado a lado e com a mesma altura.
+     Celular: tudo centralizado, um embaixo do outro. */
+  .barra { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 14px; }
+  .logo { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.08); border: 1px solid rgba(248,196,99,.3); border-radius: 60px; padding: 4px 14px 4px 4px; text-decoration: none; }
+  .logo img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--ouro); object-fit: cover; }
+  .logo span { font-weight: 800; font-size: 14px; color: var(--ouro); }
+  .selo { display: inline-flex; align-items: center; height: 34px; background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro)); color: var(--fundo); font-weight: 900; letter-spacing: 2.5px; font-size: 13px; padding: 0 16px; border-radius: 60px; }
+  .atualizado { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: 60px; background: rgba(37,211,102,.12); border: 1px solid rgba(37,211,102,.5); color: #fff; font-size: 13px; font-weight: 600; }
+  .atualizado b { color: #7ef0a8; }
+  .atualizado::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 0 4px rgba(37,211,102,.25); }
+  .linha2 { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; margin-bottom: 14px; }
+  h1 { font-size: clamp(25px, 3.6vw, 36px); font-weight: 900; line-height: 1.1; letter-spacing: -.5px; }
+  h1 em { font-style: normal; color: var(--ouro); white-space: nowrap; }
+  .t-prazo { display: flex; align-items: center; gap: 10px; }
+  .prazo-rotulo { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--suave); line-height: 1.3; text-align: right; }
+  .contagem { display: flex; gap: 8px; }
+  .contagem div { background: rgba(7,22,29,.75); border: 1px solid rgba(248,196,99,.45); border-radius: 12px; min-width: 66px; padding: 6px 6px 5px; text-align: center; }
+  .contagem b { display: block; font-size: 28px; font-weight: 900; line-height: 1.05; color: var(--ouro); }
+  .contagem small { color: var(--suave); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .caixas { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  @media (max-width: 420px) {
+    .barra { gap: 8px; margin-bottom: 12px; }
+    .selo { font-size: 11px; letter-spacing: 2px; padding: 0 12px; height: 32px; }
+    .logo span { font-size: 13px; }
+    .contagem div { min-width: 58px; }
+    .contagem b { font-size: 24px; }
+  }
+  /* Duas caixas irmãs: info (ciano, com ✓) e aviso (vermelho, com !). */
+  .caixa { border-radius: 12px; padding: 10px 12px; font-size: 13px; line-height: 1.4; color: #fff; text-align: left; display: flex; gap: 10px; align-items: center; }
+  .caixa::before { flex: 0 0 22px; height: 22px; border-radius: 50%; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  .info { background: rgba(126,232,250,.10); border: 1px solid rgba(126,232,250,.5); }
+  .info b { color: var(--ciano); }
+  .info::before { content: '✓'; background: var(--ciano); color: var(--fundo); }
+  /* Aviso da base em cada bloco (Leonardo, 23/10): 1º e 2º = preço para 2 sem bebidas; 3º = base da comparação. */
+  .base { background: rgba(248,196,99,.10); border: 1px solid rgba(248,196,99,.5); margin: 0 0 12px; }
+  .base b { color: var(--ouro); }
+  .base::before { content: 'i'; background: var(--ouro); color: var(--fundo); font-family: Georgia, serif; }
+  .aviso { background: rgba(232,65,24,.16); border: 1px solid rgba(232,65,24,.6); }
+  .aviso b { color: #ff9b7d; }
+  .aviso::before { content: '!'; background: var(--alerta); color: #fff; }
+  @media (min-width: 760px) {
+    .barra { justify-content: flex-start; }
+    .atualizado { margin-left: auto; }
+    .linha2 { flex-direction: row; justify-content: space-between; text-align: left; }
+    h1 { white-space: nowrap; }
+    .t-prazo { gap: 12px; }
+    .caixas { grid-template-columns: 1fr 1fr; gap: 24px; }
+  }
+
+  /* Filtro de companhia dentro de cada bloco, na cor do bloco (os 3 andam juntos). */
+  .cias { display: flex; gap: 6px; margin: -6px 0 14px; flex-wrap: wrap; }
+  .cias button { background: transparent; color: var(--texto); border: 1px solid var(--linha); border-radius: 999px; padding: 6px 14px; font: 700 13px var(--fonte); cursor: pointer; white-space: nowrap; }
+  .cias button.ativo { border-color: var(--cor, var(--ouro)); background: color-mix(in srgb, var(--cor, var(--ouro)) 18%, transparent); color: var(--cor, var(--ouro)); }
+  @media (max-width: 420px) { .cias { flex-wrap: nowrap; } .cias button { flex: 1; padding: 7px 2px; font-size: 12px; } }
+  .cabines { display: flex; justify-content: center; gap: 8px; margin: 16px 0 4px; }
+  .cabines button { background: transparent; color: var(--texto); border: 1px solid var(--linha); border-radius: 999px; padding: 9px 18px; font: 700 14px var(--fonte); cursor: pointer; white-space: nowrap; }
+  @media (max-width: 420px) { .cabines { gap: 6px; } .cabines button { flex: 1; padding: 9px 4px; font-size: 13px; } }
+  .cabines button.ativo { background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro)); border-color: var(--ouro); color: var(--fundo); }
+
+  /* Cada bloco é um painel com cor própria: mini = ouro, 5+ noites = ciano, quedas = verde, pesquisa = branco. */
+  section { margin-top: 20px; background: #0b222c; border: 1px solid var(--linha); border-top: 4px solid var(--cor); border-radius: 20px; padding: 22px 18px 20px; --cor: var(--ouro); }
+  section.longos { --cor: var(--ciano); }
+  section.quedas { --cor: var(--queda); }
+  section.pesquisa { --cor: #e4eef2; text-align: center; }
+  /* Título da seção bem destacado (Leonardo, 22/10): maior, com borda e fundo na cor do bloco. */
+  .rotulo { display: inline-block; background: color-mix(in srgb, var(--cor) 24%, transparent); border: 2px solid var(--cor); color: var(--cor); font-size: 17px; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; padding: 9px 18px; border-radius: 999px; }
+  @media (max-width: 420px) { .rotulo { font-size: 14px; letter-spacing: 1px; padding: 8px 14px; } }
+  h2 { font-size: clamp(24px, 4.4vw, 32px); font-weight: 800; line-height: 1.1; margin: 10px 0 6px; letter-spacing: -0.5px; }
+  h2 em { font-style: normal; color: var(--cor); }
+  /* Título e aviso da base na mesma linha no computador; no celular o aviso desce (Leonardo, 23/10). */
+  .titulo { display: flex; align-items: center; justify-content: space-between; gap: 10px 20px; flex-wrap: wrap; margin: 10px 0 6px; }
+  .titulo h2 { margin: 0; }
+  .titulo .base { flex: 0 1 470px; margin: 0; }
+  @media (max-width: 699px) { .titulo .base { flex-basis: 100%; } }
+  .explica { color: var(--suave); font-size: 14px; margin-bottom: 16px; }
+  .dica { display: none; color: var(--suave); font-size: 12px; margin: -8px 0 10px; }
+  section.pesquisa h2 em { color: var(--ouro); }
+  section.pesquisa .form { margin: 0 auto; text-align: left; background: var(--card); }
+  section .card .data { color: var(--cor); }
+
+  /* Celular: cartões em carrossel (arrasta para o lado), para a página não ficar comprida demais. */
+  .grade { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; scrollbar-width: thin; }
+  .grade > * { flex: 0 0 78%; scroll-snap-align: start; }
+  .grade > .vazio { flex-basis: 100%; }
+  @media (max-width: 699px) { .dica { display: block; } }
+  /* Tablet: 3 por linha. Computador: 5 por linha (Top 10 em 2 linhas, Top 5 em 1). */
+  @media (min-width: 700px) {
+    .grade { display: grid; grid-template-columns: repeat(3, 1fr); overflow: visible; padding-bottom: 0; }
+    .grade > .vazio { grid-column: 1 / -1; }
+  }
+  @media (min-width: 960px) { .grade { grid-template-columns: repeat(5, 1fr); } .pos { flex-basis: 34px; height: 34px; font-size: 15px; } }
+
+  /* Cartão em faixas, com a cor do bloco (--cor): topo tingido com a posição em destaque, linhas separando navio, preço e botões. */
+  .card { border: 1px solid color-mix(in srgb, var(--cor) 28%, var(--linha)); border-radius: 16px; display: flex; flex-direction: column; position: relative; min-width: 0; overflow: hidden;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--cor) 7%, #0f2a35) 0%, #0b2029 100%); }
+  .card > div { padding: 11px 14px; }
+  .c-topo { display: flex; align-items: center; gap: 8px; padding: 10px 12px !important; background: color-mix(in srgb, var(--cor) 16%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--cor) 30%, transparent); }
+  /* Posição como medalha: 1º ouro, 2º prata, 3º bronze; 4º e 5º em aço (Leonardo, 22/10). */
+  .pos { flex: 0 0 38px; height: 38px; border-radius: 50%; color: #1a1a1a; font-weight: 900; font-size: 17px; letter-spacing: -1px; display: flex; align-items: center; justify-content: center;
+    border: 2px solid rgba(255,255,255,.55); box-shadow: 0 4px 12px rgba(0,0,0,.4), inset 0 -3px 6px rgba(0,0,0,.18); }
+  .pos.p1 { background: linear-gradient(145deg, #ffe9a8, #f8c463 45%, #b8862b); }
+  .pos.p2 { background: linear-gradient(145deg, #ffffff, #d5dbe2 45%, #8f99a4); }
+  .pos.p3 { background: linear-gradient(145deg, #ffd2ad, #d38b55 45%, #8a4e26); }
+  .pos.p4, .pos.p5 { background: linear-gradient(145deg, #9fb0bb, #6c7c87 45%, #45525b); color: #fff; border-color: rgba(255,255,255,.3); }
+  /* Data sempre no mesmo formato e numa linha só: "27/02 a 06/03" (Leonardo, 22/10). */
+  .data { display: block; color: var(--cor); font-weight: 800; font-size: 16px; white-space: nowrap; letter-spacing: -.2px; }
+  .data i { font-style: normal; font-weight: 700; font-size: 14px; color: #fff; opacity: .75; margin: 0 4px; }
+  .noites { display: block; color: var(--suave); font-size: 12px; font-weight: 600; }
+  .c-navio { border-bottom: 1px dashed var(--linha); flex: 1; }   /* estica: o preço fica na mesma altura em todos os cartões da linha */
+  .navio { display: block; font-weight: 800; font-size: 16px; color: #fff; }
+  /* Roteiro sempre com Santos nas duas pontas: deixa claro que sai e volta para Santos (Leonardo, 22/10). */
+  .rota { display: block; color: var(--suave); font-size: 12px; line-height: 1.35; min-height: 49px; margin-top: 2px; }
+  .rota b { color: #fff; font-weight: 700; }
+  .explica .santos { color: var(--cor); }
+  .c-queda { display: flex; flex-direction: column; gap: 6px; border-bottom: 1px dashed var(--linha); }
+  .antes { color: var(--suave); text-decoration: line-through; font-size: 12px; }
+  .c-preco { background: rgba(0,0,0,.18); }
+  .preco { display: block; font-size: 26px; font-weight: 900; line-height: 1.1; color: var(--cor); letter-spacing: -.5px; text-shadow: 0 2px 12px color-mix(in srgb, var(--cor) 35%, transparent); }
+  .pp { display: block; color: var(--suave); font-size: 11.5px; margin-top: 3px; }
+  .c-acoes { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-bottom: 14px !important; }
+  .compara { color: var(--suave); font-size: 12px; background: var(--fundo); border-radius: 6px; padding: 6px 8px; }
+  .tag.igual { background: rgba(161,161,170,.15); color: var(--suave); }
+  .tag { align-self: flex-start; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: rgba(74,222,128,.15); color: var(--queda); }
+  .btn { display: block; text-align: center; text-decoration: none; background: var(--verde); color: #fff; font-weight: 700; font-size: 14px; padding: 11px; border-radius: 8px; margin-top: auto; border: 0; cursor: pointer; font-family: inherit; width: 100%; }
+  .btn:hover { background: var(--verde-escuro); }
+  .vazio { background: var(--card); border: 1px dashed var(--linha); border-radius: 12px; padding: 22px; color: var(--suave); text-align: center; }
+
+  .form { background: var(--card); border: 1px solid var(--linha); border-radius: 12px; padding: 18px; max-width: 760px; }
+  .abas { display: flex; gap: 8px; margin-bottom: 16px; }
+  .abas button { flex: 1; background: transparent; border: 1px solid var(--linha); color: var(--texto); padding: 11px; border-radius: 8px; font: 700 14px var(--fonte); cursor: pointer; }
+  .abas button.ativo { border-color: var(--ouro); color: var(--ouro); }
+  /* Celular: um campo abaixo do outro (pessoas e cabine lado a lado, nome embaixo).
+     Computador: navio + data; as duas datas + tipo; pessoas + cabine + nome, cada grupo numa linha. */
+  .campos { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 14px; }
+  .campos.duo { grid-template-columns: 1fr 1fr; }
+  @media (min-width: 600px) {
+    .campos.sei { grid-template-columns: 1fr 1.6fr; }
+    .campos.sug { grid-template-columns: 1fr 1fr 1.3fr; }
+    .campos.contato { grid-template-columns: 1.2fr 1fr 1.3fr; }
+  }
+  @media (max-width: 420px) { .abas button { font-size: 13px; padding: 10px 6px; } }
+  .erro { color: var(--alta); font-size: 13px; font-weight: 700; margin: -4px 0 10px; min-height: 0; }
+  .erro:empty { display: none; }
+  /* Campo errado em destaque vermelho (Leonardo, 25/10): na hora em que o cliente sai do campo e ao enviar. */
+  input.falta, select.falta, .form input:invalid { border-color: var(--alta); box-shadow: 0 0 0 2px rgba(248,113,113,.35); }
+  input.falta:focus, select.falta:focus, .form input:invalid:focus { outline: 2px solid var(--alta); outline-offset: 1px; }
+  select:disabled { opacity: .5; cursor: not-allowed; }
+  label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--suave); }
+  select, input { background: var(--fundo); color: var(--texto); border: 1px solid var(--linha); border-radius: 8px; padding: 11px; font: 500 15px var(--fonte); width: 100%; color-scheme: dark; }
+  .oculto { display: none; }
+  /* Janelinha do "Quero esse" (Leonardo, 24/10): pede nome e WhatsApp, grava no Entur e abre o WhatsApp.
+     Dentro do Wix a página fica num quadro alto, por isso a janela abre ao lado do cartão clicado (não no meio da tela). */
+  .fundo-janela { position: absolute; left: 0; top: 0; width: 100%; background: rgba(3,10,14,.72); z-index: 10; }
+  .janela { position: absolute; left: 50%; transform: translateX(-50%); width: min(420px, calc(100% - 32px)); z-index: 11;
+    background: var(--card); border: 1px solid var(--ouro); border-radius: 16px; padding: 18px; box-shadow: 0 18px 50px rgba(0,0,0,.6); }
+  .janela h3 { font-size: 19px; font-weight: 900; margin-bottom: 4px; padding-right: 28px; }
+  .janela .resumo { color: var(--suave); font-size: 13px; margin-bottom: 14px; }
+  .janela .resumo b { color: var(--ouro); }
+  .janela label { margin-bottom: 12px; }
+  .janela .fechar { position: absolute; top: 10px; right: 12px; background: none; border: 0; color: var(--suave); font-size: 24px; line-height: 1; cursor: pointer; }
+  .nota { color: var(--suave); font-size: 12px; text-align: center; margin-top: 10px; }
+  /* Depois de enviar: confirmação no lugar do formulário (o WhatsApp não abre mais; a gente chama o cliente). */
+  .pronto { text-align: center; }
+  .pronto h3 { font-size: 22px; font-weight: 900; color: var(--queda); margin-bottom: 8px; }
+  .pronto p { color: var(--texto); font-size: 15px; line-height: 1.5; }
+  .pronto p + p { color: var(--suave); font-size: 13px; margin-top: 8px; }
+  .btn:disabled { opacity: .6; cursor: wait; }
+  .rodape { color: var(--suave); font-size: 12px; text-align: center; margin-top: 36px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topo">
+    <div class="barra">
+      <a class="logo" href="https://www.360cruzeiros.com.br" target="_blank" rel="noopener">
+        <img src="https://static.wixstatic.com/media/c17eb2_bd92c19f1aa14666be0f75c50a83609a~mv2.jpg" alt="360cruzeiros" width="32" height="32">
+        <span>360cruzeiros</span>
+      </a>
+      <span class="selo">BLACK NOVEMBER</span>
+      <p class="atualizado" id="atualizado">Carregando preços...</p>
+    </div>
+    <div class="linha2">
+      <h1>Aqui o desconto <em>é de verdade</em></h1>
+      <div class="t-prazo">
+        <p class="prazo-rotulo">A Black November<br>termina em</p>
+        <div class="contagem" id="contagem"></div>
+      </div>
+    </div>
+    <div class="caixas">
+      <p class="caixa info"><span><b>Cruzeiros MSC e Costa saindo de Santos.</b> Todo dia comparamos cada preço com o de 22 de outubro: se baixou, você vê aqui.</span></p>
+      <p class="caixa aviso"><span><b>Não deixe para o último dia:</b> as cabines mais baratas e as melhores datas costumam esgotar bem antes do fim da promoção.</span></p>
+    </div>
+  </header>
+
+  <div class="cabines" id="cabines">
+    <button data-c="i" class="ativo">Interna</button>
+    <button data-c="e">Externa</button>
+    <button data-c="v">Varanda</button>
+  </div>
+
+  <section class="mini">
+    <span class="rotulo">Mini cruzeiros · 3 e 4 noites</span>
+    <div class="titulo"><h2><em>5</em> menores preços de hoje</h2>
+      <p class="caixa base"><span><b>Preço para 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente calcula o valor certinho para você.</span></p></div>
+    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total com taxas, na cabine escolhida acima.</p>
+    <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
+    <p class="dica">Arraste para o lado para ver todos →</p>
+    <div class="grade" id="mini"></div>
+  </section>
+
+  <section class="longos">
+    <span class="rotulo">Cruzeiros de 5 noites ou mais</span>
+    <div class="titulo"><h2><em>5</em> menores preços de hoje</h2>
+      <p class="caixa base"><span><b>Preço para 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente calcula o valor certinho para você.</span></p></div>
+    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total com taxas, na cabine escolhida acima.</p>
+    <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
+    <p class="dica">Arraste para o lado para ver todos →</p>
+    <div class="grade" id="longos"></div>
+  </section>
+
+  <section class="quedas">
+    <span class="rotulo">Comparação com os preços de outubro</span>
+    <div class="titulo"><h2><em>5</em> saídas que mais baixaram</h2>
+      <p class="caixa base"><span><b>Base da comparação: 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente te mostra quanto era em 22/10.</span></p></div>
+    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Preço de hoje comparado com o que registramos em 22/10.</p>
+    <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
+    <p class="dica">Arraste para o lado para ver todos →</p>
+    <div class="grade" id="quedas"></div>
+  </section>
+
+  <section class="pesquisa">
+    <span class="rotulo">Pesquisa pelo WhatsApp</span>
+    <h2>Quer comparar <em>outro cruzeiro?</em></h2>
+    <p class="explica"><b class="santos">Só cruzeiros que saem de Santos e voltam para Santos.</b> Conte o que você procura. A gente confere o preço e te responde no WhatsApp.</p>
+    <div class="form">
+      <div class="abas" id="abas">
+        <button data-a="sei" class="ativo">Já sei o cruzeiro</button>
+        <button data-a="sugestao">Quero sugestões</button>
+      </div>
+      <div class="campos sei" id="campos-sei">
+        <label>Navio<select id="f-navio"></select></label>
+        <label>Data de saída<select id="f-data"></select></label>
+      </div>
+      <div class="campos sug oculto" id="campos-sugestao">
+        <label>Posso viajar a partir de<input type="date" id="f-inicio" max="2027-04-30"></label>
+        <label>Preciso voltar até<input type="date" id="f-fim" max="2027-04-30"></label>
+        <label>Tipo de cruzeiro<select id="f-tipo">
+          <option>Mini cruzeiro (3 e 4 noites)</option><option>Cruzeiro maior (5 noites ou mais)</option>
+        </select></label>
+      </div>
+      <div class="campos duo">
+        <label>Quantas pessoas<select id="f-pessoas">
+          <option>1</option><option selected>2</option><option>3</option><option>4</option><option>5 ou mais</option>
+        </select></label>
+        <label>Cabine<select id="f-cabine">
+          <option>Interna</option><option>Externa</option><option>Varanda</option><option>Ainda não sei</option>
+        </select></label>
+      </div>
+      <div class="campos contato">
+        <label>Seu nome<input type="text" id="f-nome" placeholder="Como você se chama?" autocomplete="name"></label>
+        <label>WhatsApp com DDD<input type="tel" id="f-whats" placeholder="(11) 99999-9999" autocomplete="tel"></label>
+        <label>E-mail<input type="email" id="f-email" placeholder="voce@email.com" autocomplete="email"></label>
+      </div>
+      <p class="erro" id="f-erro"></p>
+      <button class="btn" id="f-enviar">Quero receber o preço</button>
+      <p class="nota">Preço sem pacote de bebidas. No WhatsApp a gente te mostra como fica com bebidas.</p>
+    </div>
+    <div class="form pronto oculto" id="f-pronto"></div>
+  </section>
+
+  <p class="rodape">Preços do dia para 2 adultos, com taxas, na categoria mais em conta de cada tipo de cabine. Sujeitos a disponibilidade e confirmados no atendimento.<br>360cruzeiros</p>
+</div>
+
+<div class="fundo-janela oculto" id="j-fundo"></div>
+<div class="janela oculto" id="janela" role="dialog" aria-modal="true" aria-labelledby="j-titulo">
+  <button class="fechar" id="j-fechar" aria-label="Fechar">×</button>
+  <div id="j-pedido">
+    <h3 id="j-titulo">Quero esse cruzeiro</h3>
+    <p class="resumo" id="j-resumo"></p>
+    <label>Seu nome<input type="text" id="j-nome" placeholder="Como você se chama?" autocomplete="name"></label>
+    <label>WhatsApp com DDD<input type="tel" id="j-whats" placeholder="(11) 99999-9999" autocomplete="tel"></label>
+    <p class="erro" id="j-erro"></p>
+    <button class="btn" id="j-enviar">Quero receber o preço</button>
+    <p class="nota">Preço sem pacote de bebidas. No WhatsApp a gente te mostra como fica com bebidas.</p>
+  </div>
+  <div class="pronto oculto" id="j-pronto"></div>
+</div>
+
+<script>
+(function () {
+  // Automação "Black November: dados do site" no Entur Marketing (24/10): grava o contato e os campos BF,
+  // manda a mensagem de boas-vindas no WhatsApp e cria o negócio na Qualificação Personalizado (que manda a
+  // pergunta das bebidas). O site não abre mais o WhatsApp: a gente chama o cliente. Manual: docs/conversas/passagem_blackfriday.md.
+  var ENTUR = 'https://mkt.enturos.com/api/automations/hooks/Vz-Ua5VksoQLtMwkyfx7ngMu';
+  // Páginas do anúncio de novembro (Lead Ads, Leonardo 26/10): mini/ e longo/ são cópias desta página
+  // (blackfriday/montar-modos.ps1) e mostram só aquele tipo de cruzeiro; a raiz mostra tudo.
+  var MODO = /\/mini\/(index\.html)?$/.test(location.pathname) ? 'mini' : /\/longo\/(index\.html)?$/.test(location.pathname) ? 'longo' : '';
+  function doModo(s) { return MODO === 'mini' ? s.noites <= 4 : MODO === 'longo' ? s.noites >= 5 : true; }
+  var DADOS = (MODO ? '../' : '') + 'precos.json';   // um arquivo só para as 3 páginas; já vem pré-carregado pelo <link rel="preload">
+  var FIM_BLACK_NOVEMBER = new Date('2026-12-01T00:00:00-03:00');   // fim do dia 30/11
+  var ULTIMA_SAIDA = '2027-04-30';   // a página mostra só saídas até abril de 2027 (Leonardo, 22/10)
+  var NOME_CABINE = { i: 'Interna', e: 'Externa', v: 'Varanda' };
+  var cabine = 'i', saidas = [];
+
+  function $(id) { return document.getElementById(id); }
+  function reais(n) { return 'R$ ' + n.toLocaleString('pt-BR'); }
+  function dataBr(iso) { var p = iso.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+  function volta(s) { var d = new Date(s.data + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + s.noites); return d.toISOString().slice(0, 10); }
+  // Ida e volta sempre com dia e mês: "27/02 a 06/03" (Leonardo, 22/10). O ano vai na linha das noites.
+  function periodo(s) {
+    var a = s.data.split('-'), b = volta(s).split('-');
+    return a[2] + '/' + a[1] + '<i>a</i>' + b[2] + '/' + b[1];
+  }
+  function hojeIso() { return new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); }
+  function roteiro(s) { return s.roteiro; }
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  // WhatsApp do cliente só com dígitos e com o 55 na frente; '' se não parece um celular/fixo do Brasil com DDD.
+  function whatsLimpo(t) {
+    var d = String(t).replace(/\D/g, '');
+    if (d.length === 10 || d.length === 11) d = '55' + d;
+    return /^55\d{10,11}$/.test(d) ? d : '';
+  }
+  // Manda os dados ao Entur e espera a confirmação ({ok: true}). Campo vazio não vai (o Entur dá erro com e-mail "" repetido).
+  // "pedido" é o trecho da mensagem de boas-vindas ("Recebi seu pedido <pedido>.").
+  function gravarNoEntur(dados) {
+    var limpo = { tag: 'black_friday' };
+    for (var k in dados) if (dados[k]) limpo[k] = dados[k];
+    // Sem resposta em 20 s = erro (o cliente vê "tente de novo" em vez de ficar esperando).
+    var corte = window.AbortController ? new AbortController() : null;
+    if (corte) setTimeout(function () { corte.abort(); }, 20000);
+    return fetch(ENTUR, { method: 'POST', body: JSON.stringify(limpo), headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, signal: corte ? corte.signal : undefined })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!j.ok) throw new Error(j.error || 'erro'); });
+  }
+  function diaMes(br) { return br.slice(0, 5); }   // "23/11/2026" -> "23/11"
+  function textoPronto(nome, whats) {
+    var d = whats.slice(2), num = '(' + d.slice(0, 2) + ') ' + d.slice(2, -4) + '-' + d.slice(-4);
+    return '<h3>Pronto, ' + esc(nome.split(' ')[0]) + '!</h3>' +
+      '<p>Vamos te chamar no WhatsApp <b>' + num + '</b> em poucos minutos.</p>' +
+      '<p>Lá a gente confere o preço atualizado e te mostra como fica com pacote de bebidas.</p>';
+  }
+  function enviando(botao, sim) { botao.disabled = sim; botao.textContent = sim ? 'Enviando...' : 'Quero receber o preço'; }
+  // Nome e WhatsApp lembrados no navegador do cliente, para não digitar de novo no formulário ou em outro cartão.
+  function lembrar(nome, whats) { try { localStorage.setItem('bf-contato', JSON.stringify({ nome: nome, whats: whats })); } catch (e) {} }
+  function lembrado() { try { return JSON.parse(localStorage.getItem('bf-contato')) || {}; } catch (e) { return {}; } }
+
+  function contagem() {
+    var falta = FIM_BLACK_NOVEMBER - Date.now();
+    if (falta <= 0) { $('contagem').innerHTML = '<div><b>Encerrada</b><small>Black November</small></div>'; return; }
+    var d = Math.floor(falta / 864e5), h = Math.floor(falta / 36e5) % 24, m = Math.floor(falta / 6e4) % 60;
+    $('contagem').innerHTML = '<div><b>' + d + '</b><small>dias</small></div><div><b>' + h + '</b><small>horas</small></div><div><b>' + m + '</b><small>min</small></div>';
+  }
+
+  // Filtro de companhia: vazio = Todos (MSC, Costa e temáticos da Promoação); senão as marcadas entre MSC, Costa e tematico.
+  var cias = [];
+  function chave(s) { return s.tematico ? 'tematico' : s.cia; }
+
+  // Saídas que entram nas listas: futuras até ULTIMA_SAIDA, da companhia escolhida, com preço na cabine escolhida.
+  // O arquivo de preços já traz só as que começam e terminam em Santos.
+  function validas() {
+    var hoje = hojeIso();
+    return saidas.filter(function (s) {
+      return s.data > hoje && s.data <= ULTIMA_SAIDA && s.atual[cabine] && doModo(s) && (!cias.length || cias.indexOf(chave(s)) >= 0);
+    });
+  }
+
+  // Quanto baixou desde 22/10, em % (0 = mesmo preço; negativo = subiu).
+  function queda(s) { var b = s.base && s.base[cabine]; return b ? (b - s.atual[cabine]) / b * 100 : 0; }
+  function pct(n) { return n.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + '%'; }
+
+  function card(s, pos, mostrarQueda) {
+    var atual = s.atual[cabine], antes = s.base && s.base[cabine], caiu = antes && atual < antes;
+    // Cartão em faixas separadas: posição e data / navio e roteiro / (queda) / preço / botões.
+    return '<div class="card">' +
+      '<div class="c-topo"><span class="pos p' + pos + '">' + pos + 'º</span><div>' +
+        '<span class="data">' + periodo(s) + '</span>' +
+        '<span class="noites">' + s.data.slice(0, 4) + ' · ' + s.noites + ' noites</span></div></div>' +
+      '<div class="c-navio"><span class="navio">' + esc(s.navio) + '</span>' +
+        '<span class="rota"><b>Santos</b> → ' + esc(roteiro(s)) + ' → <b>Santos</b></span></div>' +
+      (mostrarQueda && antes ?
+        '<div class="c-queda"><span class="compara">22/10: ' + reais(antes) + '<br>Hoje: ' + reais(atual) + '</span>' +
+        '<span class="tag' + (caiu ? '' : ' igual') + '">' + (caiu ? 'Baixou ' + pct(queda(s)) + ' (' + reais(antes - atual) + ')' :
+          atual === antes ? 'Mesmo preço' : 'Subiu ' + pct(-queda(s))) + '</span></div>' :
+        (caiu ? '<div class="c-queda"><span class="tag">Baixou ' + pct(queda(s)) + ' (' + reais(antes - atual) + ')</span><span class="antes">22/10: ' + reais(antes) + '</span></div>' : '')) +
+      '<div class="c-preco"><span class="preco">' + reais(atual) + '</span>' +
+        '<span class="pp">2 pessoas · ' + reais(Math.round(atual / 2)) + ' cada, taxas inclusas</span></div>' +
+      '<div class="c-acoes"><button class="btn quero" data-s="' + saidas.indexOf(s) + '">Quero esse</button>' +
+      '</div></div>';
+  }
+
+  // "Quero esse" abre a janelinha (nome e WhatsApp); a cabine é a escolhida no topo na hora do clique.
+  var escolhida = null;
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest && ev.target.closest('.quero'); if (!b) return;
+    var s = saidas[+b.dataset.s];
+    escolhida = { s: s, cabine: cabine, preco: s.atual[cabine] };
+    $('j-resumo').innerHTML = '<b>' + esc(s.navio) + '</b>, ' + dataBr(s.data) + ' a ' + dataBr(volta(s)) + ', ' + s.noites +
+      ' noites<br>Cabine ' + NOME_CABINE[cabine] + ': ' + reais(escolhida.preco) + ' para 2 pessoas';
+    var c = lembrado();
+    $('j-nome').value = $('j-nome').value || c.nome || '';
+    $('j-whats').value = $('j-whats').value || c.whats || '';
+    $('j-erro').textContent = '';
+    $('j-pedido').classList.remove('oculto');
+    $('j-pronto').classList.add('oculto');
+    // Abre na altura do cartão clicado (no Wix a página inteira fica num quadro alto).
+    var topo = b.getBoundingClientRect().top + window.pageYOffset;
+    $('j-fundo').style.height = document.documentElement.scrollHeight + 'px';
+    $('janela').style.top = Math.max(16, topo - 220) + 'px';
+    $('j-fundo').classList.remove('oculto');
+    $('janela').classList.remove('oculto');
+    $('j-nome').focus({ preventScroll: true });
+  });
+  function fecharJanela() { $('janela').classList.add('oculto'); $('j-fundo').classList.add('oculto'); }
+  $('j-fechar').onclick = fecharJanela;
+  $('j-fundo').onclick = fecharJanela;
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') fecharJanela(); });
+  ['j-nome', 'j-whats'].forEach(function (id) { $(id).oninput = function () { this.classList.remove('falta'); $('j-erro').textContent = ''; }; });
+
+  $('j-enviar').onclick = function () {
+    var nome = $('j-nome').value.trim(), whats = whatsLimpo($('j-whats').value), s = escolhida.s;
+    function falta(msg, campo) { $('j-erro').textContent = msg; campo.classList.add('falta'); campo.focus(); }
+    if (nome.length < 2) return falta('Escreva seu nome para a gente te atender.', $('j-nome'));
+    if (!whats) return falta('Escreva seu WhatsApp com DDD.', $('j-whats'));
+    lembrar(nome, $('j-whats').value.trim());
+    var ida = dataBr(s.data), fim = dataBr(volta(s)), nomeCabine = NOME_CABINE[escolhida.cabine], botao = this;
+    enviando(botao, true);
+    gravarNoEntur({ nome: nome, whatsapp: whats, origem: 'Quero esse', navio: s.navio,
+      saida: ida + ' a ' + fim + ', ' + s.noites + ' noites', cabine: nomeCabine, pessoas: '2',
+      pedido: 'do ' + s.navio + ', de ' + diaMes(ida) + ' a ' + diaMes(fim) + ', cabine ' + nomeCabine.toLowerCase() })
+      .then(function () {
+        $('j-pronto').innerHTML = textoPronto(nome, whats);
+        $('j-pedido').classList.add('oculto');
+        $('j-pronto').classList.remove('oculto');
+      })
+      .catch(function () { $('j-erro').textContent = 'Não conseguimos enviar agora. Tente de novo em instantes.'; })
+      .then(function () { enviando(botao, false); });
+  };
+
+  function vazio() {
+    return '<div class="vazio">' + (cias.length ? 'Nenhuma saída desta seleção nesta cabine hoje.' : 'Sem preços nesta cabine hoje.') + '</div>';
+  }
+
+  function desenhar() {
+    var lista = validas();
+    // garantir (opcional): se nenhuma das 5 atender, a mais barata que atende entra no lugar da 5ª.
+    function maisBaratos(id, filtro, garantir) {
+      var ordem = lista.filter(filtro).sort(function (a, b) { return a.atual[cabine] - b.atual[cabine] || (a.data < b.data ? -1 : 1); });
+      var top = ordem.slice(0, 5);
+      if (garantir && top.length === 5 && !top.some(garantir)) {
+        var extra = ordem.filter(garantir)[0];
+        if (extra) top[4] = extra;
+      }
+      $(id).innerHTML = top.map(function (s, k) { return card(s, k + 1, false); }).join('') ||
+        vazio();
+    }
+    maisBaratos('mini', function (s) { return s.noites <= 4; });
+    // 5 noites ou mais: sempre pelo menos uma para a Argentina (Leonardo, 22/10).
+    maisBaratos('longos', function (s) { return s.noites >= 5; }, function (s) { return /Buenos Aires/i.test(s.roteiro); });
+
+    // Maior queda em % primeiro; empate (ex.: ninguém baixou ainda) = a mais barata primeiro.
+    var quedas = lista.filter(function (s) { return s.base && s.base[cabine]; })
+      .sort(function (a, b) { return queda(b) - queda(a) || a.atual[cabine] - b.atual[cabine]; }).slice(0, 5);
+    $('quedas').innerHTML = quedas.map(function (s, k) { return card(s, k + 1, true); }).join('') ||
+      vazio();
+  }
+
+  function preencherNavios() {
+    var hoje = hojeIso(), porNavio = {};
+    saidas.forEach(function (s) { if (s.data > hoje && s.data <= ULTIMA_SAIDA && doModo(s)) (porNavio[s.navio] = porNavio[s.navio] || []).push(s); });
+    // MSC e Costa primeiro; os temáticos da Promoação no fim da lista.
+    var nomes = Object.keys(porNavio).sort(function (a, b) {
+      return porNavio[a][0].tematico - porNavio[b][0].tematico || a.localeCompare(b, 'pt-BR');
+    });
+    // Navio e data começam vazios, para o cliente escolher; a data só libera depois do navio (Leonardo, 25/10).
+    $('f-navio').innerHTML = '<option value="" selected disabled>Selecione o navio</option>' +
+      nomes.map(function (n) { return '<option>' + esc(n) + '</option>'; }).join('');
+    function datas() {
+      var l = porNavio[$('f-navio').value] || [];
+      $('f-data').disabled = !l.length;
+      $('f-data').innerHTML = '<option value="" selected disabled>' + (l.length ? 'Selecione a data' : 'Escolha o navio primeiro') + '</option>' +
+        l.map(function (s) {
+          return '<option value="' + s.data + '|' + s.noites + '">' + dataBr(s.data).slice(0, 5) + ' a ' + dataBr(volta(s)) + ' · ' + s.noites + ' noites · ' + esc(roteiro(s)) + '</option>';
+        }).join('');
+    }
+    $('f-navio').onchange = function () { this.classList.remove('falta'); $('f-erro').textContent = ''; datas(); };
+    $('f-data').onchange = function () { this.classList.remove('falta'); $('f-erro').textContent = ''; };
+    datas();
+  }
+
+  // Filtro repetido em cada bloco, sempre igual nos 3: mudar um muda todos (Leonardo, 23/10).
+  // Todos sozinho, ou 1 a 3 companhias (as 3 ficam marcadas, sem trocar para Todos); desmarcar a última volta para Todos.
+  [].forEach.call(document.querySelectorAll('.cias'), function (filtro) {
+    filtro.onclick = function (ev) {
+      var b = ev.target.closest('button'); if (!b) return;
+      var k = b.dataset.k, i = cias.indexOf(k);
+      if (k === 'todos') cias = [];
+      else if (i >= 0) cias.splice(i, 1);
+      else cias.push(k);
+      [].forEach.call(document.querySelectorAll('.cias button'), function (x) {
+        x.classList.toggle('ativo', x.dataset.k === 'todos' ? !cias.length : cias.indexOf(x.dataset.k) >= 0);
+      });
+      desenhar();
+    };
+  });
+
+  $('cabines').onclick = function (ev) {
+    var b = ev.target.closest('button'); if (!b) return;
+    cabine = b.dataset.c;
+    [].forEach.call(this.children, function (x) { x.classList.toggle('ativo', x === b); });
+    desenhar();
+  };
+
+  var aba = 'sei';
+  $('abas').onclick = function (ev) {
+    var b = ev.target.closest('button'); if (!b) return;
+    aba = b.dataset.a;
+    [].forEach.call(this.children, function (x) { x.classList.toggle('ativo', x === b); });
+    $('campos-sei').classList.toggle('oculto', aba !== 'sei');
+    $('campos-sugestao').classList.toggle('oculto', aba === 'sei');
+  };
+
+  function erro(msg, campo) {
+    $('f-erro').textContent = msg;
+    if (campo) { campo.classList.add('falta'); campo.focus(); }
+  }
+  ['f-nome', 'f-whats', 'f-email', 'f-inicio', 'f-fim'].forEach(function (id) { $(id).oninput = function () { this.classList.remove('falta'); $('f-erro').textContent = ''; }; });
+
+  // Datas das sugestões: só de hoje até a última saída da página; data inválida ou fora disso fica em vermelho com o motivo.
+  function problemaData(el, nome) {
+    if (el.validity && el.validity.badInput) return 'A data em "' + nome + '" não existe. Confira o dia e o mês.';
+    if (!el.value) return 'Preencha "' + nome + '".';
+    if (el.value < hojeIso()) return 'A data em "' + nome + '" já passou. Escolha um dia a partir de hoje.';
+    if (el.value > ULTIMA_SAIDA) return 'A data em "' + nome + '" precisa ser até ' + dataBr(ULTIMA_SAIDA) + '.';
+    return '';
+  }
+  $('f-inicio').min = $('f-fim').min = hojeIso();
+  [['f-inicio', 'Posso viajar a partir de'], ['f-fim', 'Preciso voltar até']].forEach(function (c) {
+    $(c[0]).onchange = $(c[0]).onblur = function () {
+      var p = (this.value || (this.validity && this.validity.badInput)) ? problemaData(this, c[1]) : '';
+      if (p) erro(p, null), this.classList.add('falta'); else this.classList.remove('falta');
+    };
+  });
+  // WhatsApp e e-mail: avisa ao sair do campo, sem esperar o envio.
+  $('f-whats').onblur = function () { if (this.value.trim() && !whatsLimpo(this.value)) { erro('O WhatsApp precisa ter DDD + número, ex.: (11) 99999-9999.'); this.classList.add('falta'); } };
+  $('f-email').onblur = function () { if (this.value.trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(this.value.trim())) { erro('Esse e-mail parece incompleto. Confira, ex.: voce@email.com.'); this.classList.add('falta'); } };
+  $('j-whats').onblur = function () { if (this.value.trim() && !whatsLimpo(this.value)) { $('j-erro').textContent = 'O WhatsApp precisa ter DDD + número, ex.: (11) 99999-9999.'; this.classList.add('falta'); } };
+  (function () { var c = lembrado(); $('f-nome').value = c.nome || ''; $('f-whats').value = c.whats || ''; })();
+
+  // Bebidas saíram do formulário (Leonardo, 24/10): a pergunta das bebidas é a da Qualificação, igual para todos.
+  $('f-enviar').onclick = function () {
+    var nome = $('f-nome').value.trim(), whats = whatsLimpo($('f-whats').value), email = $('f-email').value.trim().toLowerCase();
+    var cab = $('f-cabine').value, comCabine = cab === 'Ainda não sei' ? '' : ', cabine ' + cab.toLowerCase();
+    var dados = { nome: nome, whatsapp: whats, email: email, cabine: cab, pessoas: $('f-pessoas').value };
+    if (aba === 'sei') {
+      var d = ($('f-data').value || '|').split('|');
+      if (!$('f-navio').value) { erro('Escolha o navio.', $('f-navio')); return; }
+      if (!d[0]) { erro('Escolha a data de saída.', $('f-data')); return; }
+      var s = { data: d[0], noites: +d[1] }, ida = dataBr(s.data), fim = dataBr(volta(s));
+      dados.origem = 'Já sei o cruzeiro';
+      dados.navio = $('f-navio').value;
+      dados.saida = ida + ' a ' + fim + ', ' + s.noites + ' noites';
+      dados.pedido = 'do ' + dados.navio + ', de ' + diaMes(ida) + ' a ' + diaMes(fim) + comCabine;
+    } else {
+      var ini = $('f-inicio').value, ate = $('f-fim').value;
+      var pIni = problemaData($('f-inicio'), 'Posso viajar a partir de'), pFim = problemaData($('f-fim'), 'Preciso voltar até');
+      if (pIni) { erro(pIni, $('f-inicio')); return; }
+      if (pFim) { erro(pFim, $('f-fim')); return; }
+      if (ate <= ini) { erro('A data de volta precisa ser depois da data de ida.', $('f-fim')); return; }
+      dados.origem = 'Quero sugestões';
+      dados.periodo = dataBr(ini) + ' a ' + dataBr(ate);
+      dados.tipo = $('f-tipo').value;
+      dados.pedido = 'de sugestões de cruzeiro entre ' + diaMes(dataBr(ini)) + ' e ' + diaMes(dataBr(ate));
+    }
+    if (nome.length < 2) { erro('Escreva seu nome para a gente te atender.', $('f-nome')); return; }
+    if (!whats) { erro('Escreva seu WhatsApp com DDD.', $('f-whats')); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) { erro('Escreva um e-mail válido.', $('f-email')); return; }
+    $('f-erro').textContent = '';
+    lembrar(nome, $('f-whats').value.trim());
+    var botao = this;
+    enviando(botao, true);
+    gravarNoEntur(dados)
+      .then(function () {
+        $('f-pronto').innerHTML = textoPronto(nome, whats);
+        document.querySelector('.pesquisa .form').classList.add('oculto');
+        $('f-pronto').classList.remove('oculto');
+      })
+      .catch(function () { erro('Não conseguimos enviar agora. Tente de novo em instantes.'); })
+      .then(function () { enviando(botao, false); });
+  };
+
+  // Página de um tipo só: esconde o bloco do outro tipo e já marca o tipo nas sugestões.
+  if (MODO) {
+    document.querySelector(MODO === 'mini' ? 'section.longos' : 'section.mini').classList.add('oculto');
+    $('f-tipo').selectedIndex = MODO === 'mini' ? 0 : 1;
+  }
+
+  contagem();
+  setInterval(contagem, 30000);
+
+  fetch(DADOS).then(function (r) { return r.json(); }).then(function (j) {
+    saidas = j.saidas;
+    var a = new Date(j.atualizadoEm);
+    $('atualizado').innerHTML = 'Preços atualizados em <b>' + a.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' às ' +
+      a.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '</b>';
+    desenhar();
+    preencherNavios();
+  }).catch(function () {
+    $('atualizado').textContent = 'Não conseguimos carregar os preços agora. Fale com a gente pelo WhatsApp.';
+  });
+})();
+</script>
+</body>
+</html>

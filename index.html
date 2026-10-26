@@ -323,7 +323,11 @@
   // manda a mensagem de boas-vindas no WhatsApp e cria o negócio na Qualificação Personalizado (que manda a
   // pergunta das bebidas). O site não abre mais o WhatsApp: a gente chama o cliente. Manual: docs/conversas/passagem_blackfriday.md.
   var ENTUR = 'https://mkt.enturos.com/api/automations/hooks/Vz-Ua5VksoQLtMwkyfx7ngMu';
-  var DADOS = 'precos.json';   // mesmo endereço da página; já vem pré-carregado pelo <link rel="preload">
+  // Páginas do anúncio de novembro (Lead Ads, Leonardo 26/10): mini/ e longo/ são cópias desta página
+  // (blackfriday/montar-modos.ps1) e mostram só aquele tipo de cruzeiro; a raiz mostra tudo.
+  var MODO = /\/mini\/(index\.html)?$/.test(location.pathname) ? 'mini' : /\/longo\/(index\.html)?$/.test(location.pathname) ? 'longo' : '';
+  function doModo(s) { return MODO === 'mini' ? s.noites <= 4 : MODO === 'longo' ? s.noites >= 5 : true; }
+  var DADOS = (MODO ? '../' : '') + 'precos.json';   // um arquivo só para as 3 páginas; já vem pré-carregado pelo <link rel="preload">
   var FIM_BLACK_NOVEMBER = new Date('2026-12-01T00:00:00-03:00');   // fim do dia 30/11
   var ULTIMA_SAIDA = '2027-04-30';   // a página mostra só saídas até abril de 2027 (Leonardo, 22/10)
   var NOME_CABINE = { i: 'Interna', e: 'Externa', v: 'Varanda' };
@@ -388,7 +392,7 @@
   function validas() {
     var hoje = hojeIso();
     return saidas.filter(function (s) {
-      return s.data > hoje && s.data <= ULTIMA_SAIDA && s.atual[cabine] && (!cias.length || cias.indexOf(chave(s)) >= 0);
+      return s.data > hoje && s.data <= ULTIMA_SAIDA && s.atual[cabine] && doModo(s) && (!cias.length || cias.indexOf(chave(s)) >= 0);
     });
   }
 
@@ -494,7 +498,7 @@
 
   function preencherNavios() {
     var hoje = hojeIso(), porNavio = {};
-    saidas.forEach(function (s) { if (s.data > hoje && s.data <= ULTIMA_SAIDA) (porNavio[s.navio] = porNavio[s.navio] || []).push(s); });
+    saidas.forEach(function (s) { if (s.data > hoje && s.data <= ULTIMA_SAIDA && doModo(s)) (porNavio[s.navio] = porNavio[s.navio] || []).push(s); });
     // MSC e Costa primeiro; os temáticos da Promoação no fim da lista.
     var nomes = Object.keys(porNavio).sort(function (a, b) {
       return porNavio[a][0].tematico - porNavio[b][0].tematico || a.localeCompare(b, 'pt-BR');
@@ -615,6 +619,12 @@
       .catch(function () { erro('Não conseguimos enviar agora. Tente de novo em instantes.'); })
       .then(function () { enviando(botao, false); });
   };
+
+  // Página de um tipo só: esconde o bloco do outro tipo e já marca o tipo nas sugestões.
+  if (MODO) {
+    document.querySelector(MODO === 'mini' ? 'section.longos' : 'section.mini').classList.add('oculto');
+    $('f-tipo').selectedIndex = MODO === 'mini' ? 0 : 1;
+  }
 
   contagem();
   setInterval(contagem, 30000);
