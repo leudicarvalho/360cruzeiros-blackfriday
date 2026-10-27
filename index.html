@@ -109,7 +109,11 @@
   .titulo .base { flex: 0 1 470px; margin: 0; }
   @media (max-width: 699px) { .titulo .base { flex-basis: 100%; } }
   .explica { color: var(--suave); font-size: 14px; margin-bottom: 16px; }
-  .dica { display: none; color: var(--suave); font-size: 12px; margin: -8px 0 10px; }
+  /* "Arraste" em destaque (Leonardo, 27/10: estava escondido): cor do bloco, negrito e seta que mexe; mesma altura de antes. */
+  .dica { display: none; color: var(--cor); font-size: 13px; font-weight: 800; line-height: 17px; margin: -8px 0 10px; }
+  .dica .seta { display: inline-block; animation: seta 1.1s ease-in-out infinite; }
+  @keyframes seta { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+  @media (prefers-reduced-motion: reduce) { .dica .seta { animation: none; } }
   section.pesquisa h2 em { color: var(--ouro); }
   section.pesquisa .form { margin: 0 auto; text-align: left; background: var(--card); }
   section .card .data { color: var(--cor); }
@@ -184,6 +188,15 @@
   label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--suave); }
   select, input { background: var(--fundo); color: var(--texto); border: 1px solid var(--linha); border-radius: 8px; padding: 11px; font: 500 15px var(--fonte); width: 100%; color-scheme: dark; }
   .oculto { display: none; }
+  /* Altura fixa do formulário (27/10): a página fica num bloco do Wix de altura fixa; se crescer, o celular trava ao rolar.
+     As 2 abas ocupam o mesmo lugar (vale a mais alta) e o erro aparece no lugar da nota, embaixo do botão. */
+  .troca { display: grid; }
+  .troca > .campos { grid-area: 1 / 1; }
+  .troca > .campos.oculto { display: grid; visibility: hidden; }
+  .msg-form { display: grid; margin-top: 10px; min-height: 4.2em; font-size: 12px; align-items: start; }
+  .msg-form > p { grid-area: 1 / 1; margin: 0; }
+  .msg-form .erro { text-align: center; font-size: 12px; line-height: 1.4; }
+  .msg-form .erro:not(:empty) + .nota { visibility: hidden; }
   /* Janelinha do "Quero esse" (Leonardo, 24/10): pede nome e WhatsApp, grava no Entur e abre o WhatsApp.
      Dentro do Wix a página fica num quadro alto, por isso a janela abre ao lado do cartão clicado (não no meio da tela). */
   .fundo-janela { position: absolute; left: 0; top: 0; width: 100%; background: rgba(3,10,14,.72); z-index: 10; }
@@ -268,7 +281,7 @@
       <p class="caixa base"><span><b>Preço para 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente calcula o valor certinho para você.</span></p></div>
     <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total com taxas, na cabine escolhida acima.</p>
     <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
-    <p class="dica">Arraste para o lado para ver todos →</p>
+    <p class="dica">Arraste para o lado para ver todos <span class="seta">→</span></p>
     <div class="grade" id="mini"></div>
   </section>
 
@@ -278,7 +291,7 @@
       <p class="caixa base"><span><b>Preço para 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente calcula o valor certinho para você.</span></p></div>
     <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total com taxas, na cabine escolhida acima.</p>
     <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
-    <p class="dica">Arraste para o lado para ver todos →</p>
+    <p class="dica">Arraste para o lado para ver todos <span class="seta">→</span></p>
     <div class="grade" id="longos"></div>
   </section>
 
@@ -289,7 +302,7 @@
     <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Preço de hoje comparado com o que registramos em 22/10.</p>
     <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
     <div class="cias dur" id="duracao"><button data-d="" class="ativo">Todos</button><button data-d="mini">Mini cruzeiros</button><button data-d="longo">5 noites ou mais</button></div>
-    <p class="dica">Arraste para o lado para ver todos →</p>
+    <p class="dica">Arraste para o lado para ver todos <span class="seta">→</span></p>
     <div class="grade" id="quedas"></div>
   </section>
 
@@ -302,6 +315,7 @@
         <button data-a="sei" class="ativo">Já sei o cruzeiro</button>
         <button data-a="sugestao">Quero sugestões</button>
       </div>
+      <div class="troca">
       <div class="campos sei" id="campos-sei">
         <label>Navio<select id="f-navio"></select></label>
         <label>Data de saída<select id="f-data"></select></label>
@@ -312,6 +326,7 @@
         <label>Tipo de cruzeiro<select id="f-tipo">
           <option>Mini cruzeiro (3 e 4 noites)</option><option>Cruzeiro maior (5 noites ou mais)</option>
         </select></label>
+      </div>
       </div>
       <div class="campos duo">
         <label>Quantas pessoas<select id="f-pessoas">
@@ -326,9 +341,8 @@
         <label>WhatsApp com DDD<input type="tel" id="f-whats" placeholder="(11) 99999-9999" autocomplete="tel"></label>
         <label>E-mail<input type="email" id="f-email" placeholder="voce@email.com" autocomplete="email"></label>
       </div>
-      <p class="erro" id="f-erro"></p>
       <button class="btn" id="f-enviar">Quero receber o preço</button>
-      <p class="nota">Preço sem pacote de bebidas. No WhatsApp a gente te mostra como fica com bebidas.</p>
+      <div class="msg-form"><p class="erro" id="f-erro"></p><p class="nota">Preço sem pacote de bebidas. No WhatsApp a gente te mostra como fica com bebidas.</p></div>
     </div>
     <div class="form pronto oculto" id="f-pronto"></div>
   </section>
@@ -671,6 +685,29 @@
     $('duracao').classList.add('oculto');   // as quedas já vêm só do tipo da página
   }
 
+  // Celular (Leonardo, 27/10): na 1ª vez que cada carrossel aparece na tela, ele anda um pouco e volta, para mostrar que arrasta.
+  function mostrarArraste() {
+    if (!window.IntersectionObserver) return;
+    var obs = new IntersectionObserver(function (itens) {
+      itens.forEach(function (it) {
+        var g = it.target;
+        if (!it.isIntersecting) return;
+        obs.unobserve(g);
+        if (g.scrollWidth <= g.clientWidth + 10 || g.scrollLeft > 0) return;
+        setTimeout(function () {
+          if (g.scrollLeft > 0) return;
+          g.style.scrollSnapType = 'none';   // sem isso o encaixe pularia um cartão inteiro
+          g.scrollTo({ left: 70, behavior: 'smooth' });
+          setTimeout(function () {
+            if (g.scrollLeft <= 80) g.scrollTo({ left: 0, behavior: 'smooth' });
+            setTimeout(function () { g.style.scrollSnapType = ''; }, 700);
+          }, 700);
+        }, 400);
+      });
+    }, { threshold: 0.6 });
+    [].forEach.call(document.querySelectorAll('.grade'), function (g) { obs.observe(g); });
+  }
+
   contagem();
   setInterval(contagem, 30000);
 
@@ -681,6 +718,7 @@
       a.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '</b>';
     desenhar();
     preencherNavios();
+    mostrarArraste();
   }).catch(function () {
     $('atualizado').textContent = 'Não conseguimos carregar os preços agora. Fale com a gente pelo WhatsApp.';
   });
