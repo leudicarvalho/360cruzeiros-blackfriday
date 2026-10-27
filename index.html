@@ -38,7 +38,12 @@
   .selo { display: inline-flex; align-items: center; height: 34px; background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro)); color: var(--fundo); font-weight: 900; letter-spacing: 2.5px; font-size: 13px; padding: 0 16px; border-radius: 60px; }
   .atualizado { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: 60px; background: rgba(37,211,102,.12); border: 1px solid rgba(37,211,102,.5); color: #fff; font-size: 13px; font-weight: 600; }
   .atualizado b { color: #7ef0a8; }
-  .atualizado::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 0 4px rgba(37,211,102,.25); }
+  .atualizado::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 0 4px rgba(37,211,102,.25); flex: none; }
+  /* Celular (27/10): no iPhone a letra é mais larga e a frase passava de uma linha dentro da pílula de altura fixa. */
+  @media (max-width: 759px) {
+    .atualizado { height: auto; min-height: 34px; max-width: 100%; padding: 6px 12px; gap: 6px; font-size: 12px; line-height: 1.25; text-align: center; }
+    .atualizado b { white-space: nowrap; }
+  }
   .linha2 { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; margin-bottom: 14px; }
   h1 { font-size: clamp(25px, 3.6vw, 36px); font-weight: 900; line-height: 1.1; letter-spacing: -.5px; }
   h1 em { font-style: normal; color: var(--ouro); white-space: nowrap; }
@@ -197,6 +202,34 @@
   .pronto p + p { color: var(--suave); font-size: 13px; margin-top: 8px; }
   .btn:disabled { opacity: .6; cursor: wait; }
   .rodape { color: var(--suave); font-size: 12px; text-align: center; margin-top: 36px; }
+  /* Celular mais enxuto (Leonardo, 27/10: "a pesquisa das cabines deve ir mais pra cima", senão só se veem os avisos e não os preços).
+     Mesmos textos e mesma ordem; só tamanhos e espaços menores. Computador e tablet não mudam. */
+  @media (max-width: 699px) {
+    .topo { padding: 10px 14px 14px; }
+    .barra { gap: 6px; margin-bottom: 10px; }
+    .logo { gap: 6px; padding: 3px 10px 3px 3px; }
+    .logo img { width: 24px; height: 24px; }
+    .logo span { font-size: 12px; }
+    .selo { height: 30px; font-size: 10px; letter-spacing: 1.5px; padding: 0 10px; }
+    .linha2 { gap: 8px; margin-bottom: 10px; }
+    h1 { font-size: 22px; }
+    .t-prazo { gap: 8px; }
+    .prazo-rotulo { font-size: 10px; letter-spacing: 1px; }
+    .contagem { gap: 6px; }
+    .contagem div { min-width: 46px; padding: 3px 4px; border-radius: 10px; }
+    .contagem b { font-size: 19px; }
+    .contagem small { font-size: 9px; letter-spacing: .5px; }
+    .caixas { gap: 8px; }
+    .caixa { font-size: 12px; line-height: 1.35; padding: 7px 10px; gap: 8px; }
+    .caixa::before { flex-basis: 18px; height: 18px; font-size: 11px; }
+    .cabines { margin: 12px 0 0; gap: 6px; }
+    .cabines button { padding: 8px 14px; font-size: 13px; }
+    section { margin-top: 14px; padding: 16px 14px 16px; }
+    .rotulo { font-size: 12px; letter-spacing: 1px; padding: 6px 12px; }
+    .titulo { margin: 8px 0 6px; gap: 8px; }
+    h2 { font-size: 21px; }
+    .explica { font-size: 13px; margin-bottom: 12px; }
+  }
 </style>
 </head>
 <body>
