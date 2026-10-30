@@ -146,6 +146,19 @@
   .data { display: block; color: var(--cor); font-weight: 800; font-size: 16px; white-space: nowrap; letter-spacing: -.2px; }
   .data i { font-style: normal; font-weight: 700; font-size: 14px; color: #fff; opacity: .75; margin: 0 4px; }
   .noites { display: block; color: var(--suave); font-size: 12px; font-weight: 600; }
+  /* Cabine escolhida numa etiqueta pendurada na linha entre navio e preço de cada cartão (Leonardo, 30/10: o cliente tem de ter
+     certeza de qual cabine está vendo; ao lado da data ou do preço não cabia no celular). Ao trocar a cabine, preço e etiqueta
+     piscam de leve. Não ocupa espaço: a altura da página não muda. */
+  .c-preco { position: relative; }
+  .etq-cabine { position: absolute; top: 0; right: 12px; transform: translateY(-50%); font-size: 10px; font-weight: 800; letter-spacing: .8px;
+    text-transform: uppercase; line-height: 1; white-space: nowrap; padding: 4px 9px; border-radius: 999px; color: var(--cor);
+    border: 1px solid color-mix(in srgb, var(--cor) 70%, transparent); background: color-mix(in srgb, var(--cor) 20%, #0d2530); }
+  .cab-nome { color: var(--cor); }
+  .trocou .preco { animation: trocou .7s ease-out; }
+  .trocou .etq-cabine { animation: trocou-selo .7s ease-out; }
+  @keyframes trocou { 0% { opacity: .15; transform: scale(.94); } 60% { opacity: 1; transform: scale(1.04); } 100% { transform: scale(1); } }
+  @keyframes trocou-selo { 0% { opacity: .15; } 100% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .trocou .preco, .trocou .etq-cabine { animation: none; } }
   .c-navio { border-bottom: 1px dashed var(--linha); flex: 1; }   /* estica: o preço fica na mesma altura em todos os cartões da linha */
   .navio { display: block; font-weight: 800; font-size: 16px; color: #fff; }
   /* Roteiro sempre com Santos nas duas pontas: deixa claro que sai e volta para Santos (Leonardo, 22/10). */
@@ -279,7 +292,7 @@
     <span class="rotulo">Mini cruzeiros · 3 e 4 noites</span>
     <div class="titulo"><h2><em>5</em> menores preços de hoje</h2>
       <p class="caixa base"><span><b>Preço para 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente calcula o valor certinho para você.</span></p></div>
-    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total com taxas, na cabine escolhida acima.</p>
+    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total com taxas, na cabine <b class="cab-nome">Interna</b>.</p>
     <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
     <p class="dica">Arraste para o lado para ver todos <span class="seta">→</span></p>
     <div class="grade" id="mini"></div>
@@ -289,7 +302,7 @@
     <span class="rotulo">Cruzeiros de 5 noites ou mais</span>
     <div class="titulo"><h2><em>5</em> menores preços de hoje</h2>
       <p class="caixa base"><span><b>Preço para 2 adultos, sem pacote de bebidas.</b> Vai com outro número de pessoas ou quer bebidas? No WhatsApp a gente calcula o valor certinho para você.</span></p></div>
-    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total com taxas, na cabine escolhida acima.</p>
+    <p class="explica"><b class="santos">Todas saem de Santos e voltam para Santos.</b> Valor total com taxas, na cabine <b class="cab-nome">Interna</b>.</p>
     <div class="cias"><button data-k="todos" class="ativo">Todos</button><button data-k="MSC">MSC</button><button data-k="Costa">Costa</button><button data-k="tematico">Temáticos</button></div>
     <p class="dica">Arraste para o lado para ver todos <span class="seta">→</span></p>
     <div class="grade" id="longos"></div>
@@ -465,7 +478,7 @@
         '<span class="tag' + (caiu ? '' : ' igual') + '">' + (caiu ? 'Baixou ' + pct(queda(s)) + ' (' + reais(antes - atual) + ')' :
           atual === antes ? 'Mesmo preço' : 'Subiu ' + pct(-queda(s))) + '</span></div>' :
         (caiu ? '<div class="c-queda"><span class="tag">Baixou ' + pct(queda(s)) + ' (' + reais(antes - atual) + ')</span><span class="antes">22/10: ' + reais(antes) + '</span></div>' : '')) +
-      '<div class="c-preco"><span class="preco">' + reais(atual) + '</span>' +
+      '<div class="c-preco"><span class="etq-cabine">' + NOME_CABINE[cabine] + '</span><span class="preco">' + reais(atual) + '</span>' +
         '<span class="pp">2 pessoas · ' + reais(Math.round(atual / 2)) + ' cada, taxas inclusas</span></div>' +
       '<div class="c-acoes"><button class="btn quero" data-s="' + saidas.indexOf(s) + '">Quero esse</button>' +
       '</div></div>';
@@ -597,7 +610,10 @@
     var b = ev.target.closest('button'); if (!b) return;
     cabine = b.dataset.c;
     [].forEach.call(this.children, function (x) { x.classList.toggle('ativo', x === b); });
+    [].forEach.call(document.querySelectorAll('.cab-nome'), function (x) { x.textContent = NOME_CABINE[cabine]; });
     desenhar();
+    // Pisca preço e etiqueta para o cliente ver que todos os cartões mudaram junto.
+    [].forEach.call(document.querySelectorAll('.grade'), function (g) { g.classList.remove('trocou'); void g.offsetWidth; g.classList.add('trocou'); });
   };
 
   var aba = 'sei';
