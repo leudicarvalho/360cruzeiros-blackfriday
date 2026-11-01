@@ -409,12 +409,41 @@
   function roteiro(s) { return s.roteiro; }
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
-  // WhatsApp do cliente só com dígitos e com o 55 na frente; '' se não parece um celular/fixo do Brasil com DDD.
-  function whatsLimpo(t) {
-    var d = String(t).replace(/\D/g, '');
-    if (d.length === 10 || d.length === 11) d = '55' + d;
-    return /^55\d{10,11}$/.test(d) ? d : '';
+  // WhatsApp do cliente (Leonardo, 01/11): confere DDD que existe, celular com 9 e número de mentira (todos iguais, ex. 99999-9999), sem travar quem digita certo.
+  // Aceita com ou sem +55, com zero na frente e celular antigo de 8 dígitos (põe o 9). Devolve { num: '55...' ou '', motivo }.
+  var DDDS = ' 11 12 13 14 15 16 17 18 19 21 22 24 27 28 31 32 33 34 35 37 38 41 42 43 44 45 46 47 48 49 51 53 54 55 61 62 63 64 65 66 67 68 69 ' +
+    '71 73 74 75 77 79 81 82 83 84 85 86 87 88 89 91 92 93 94 95 96 97 98 99 ';
+  function conferirWhats(t) {
+    var d = String(t).replace(/\D/g, '').replace(/^0+/, ''), ex = ' Ex.: (11) 99999-9999.';
+    if (/^55\d{10,11}$/.test(d)) d = d.slice(2);
+    if (!d) return { num: '', motivo: 'Escreva seu WhatsApp com DDD.' };
+    if (d.length === 8 || d.length === 9) return { num: '', motivo: 'Faltou o DDD antes do número.' + ex };
+    if (d.length < 10 || d.length > 11) return { num: '', motivo: 'O WhatsApp está com números a ' + (d.length < 10 ? 'menos' : 'mais') + '. Confira.' + ex };
+    var ddd = d.slice(0, 2), resto = d.slice(2);
+    if (DDDS.indexOf(' ' + ddd + ' ') < 0) return { num: '', motivo: 'O DDD ' + ddd + ' não existe. Confira o DDD.' + ex };
+    if (resto.length === 9 && resto[0] !== '9') return { num: '', motivo: 'Celular com 9 dígitos começa com 9. Confira o número.' + ex };
+    if (resto.length === 8 && /[6-9]/.test(resto[0])) resto = '9' + resto;   // celular sem o 9 na frente
+    var fim = resto.slice(-8);
+    if (/^(\d)\1+$/.test(fim)) return { num: '', motivo: 'Esse número parece não ser real. Confira.' + ex };
+    return { num: '55' + ddd + resto, motivo: '' };
   }
+  function whatsLimpo(t) { return conferirWhats(t).num; }
+  // Mostra (11) 99999-9999 enquanto digita; só mexe quando o cursor está no fim e a pessoa está escrevendo (apagar fica livre).
+  function mascaraWhats(d) {
+    if (d.length > 11) return d;
+    if (d.length <= 2) return d.length ? '(' + d : '';
+    var r = d.slice(2), corte = r.length > 8 ? 5 : 4;
+    return '(' + d.slice(0, 2) + ') ' + (r.length > 4 ? r.slice(0, corte) + '-' + r.slice(corte) : r);
+  }
+  ['f-whats', 'j-whats'].forEach(function (id) {
+    var el = document.getElementById(id);
+    el.addEventListener('input', function (ev) {
+      if (!/^insert/.test(ev.inputType || '') || this.selectionStart !== this.value.length || /^\s*\+/.test(this.value)) return;
+      this.value = mascaraWhats(this.value.replace(/\D/g, ''));
+    });
+    // Ao sair do campo, número certo fica no formato padrão (inclusive quem digitou +55 ou sem o 9).
+    el.addEventListener('blur', function () { var n = whatsLimpo(this.value); if (n) this.value = mascaraWhats(n.slice(2)); });
+  });
   // Manda os dados ao Entur e espera a confirmação ({ok: true}). Campo vazio não vai (o Entur dá erro com e-mail "" repetido).
   // "pedido" é o trecho da mensagem de boas-vindas ("Recebi seu pedido <pedido>.").
   function gravarNoEntur(dados) {
@@ -517,7 +546,7 @@
     var nome = $('j-nome').value.trim(), whats = whatsLimpo($('j-whats').value), s = escolhida.s;
     function falta(msg, campo) { $('j-erro').textContent = msg; campo.classList.add('falta'); campo.focus(); }
     if (nome.length < 2) return falta('Escreva seu nome para a gente te atender.', $('j-nome'));
-    if (!whats) return falta('Escreva seu WhatsApp com DDD.', $('j-whats'));
+    if (!whats) return falta(conferirWhats($('j-whats').value).motivo, $('j-whats'));
     lembrar(nome, $('j-whats').value.trim());
     var ida = dataBr(s.data), fim = dataBr(volta(s)), nomeCabine = NOME_CABINE[escolhida.cabine], botao = this;
     enviando(botao, true);
@@ -648,8 +677,8 @@
     };
   });
   // WhatsApp: avisa ao sair do campo, sem esperar o envio. E-mail saiu do formulário (Leonardo, 01/11): só nome e WhatsApp, igual ao "Quero esse".
-  $('f-whats').onblur = function () { if (this.value.trim() && !whatsLimpo(this.value)) { erro('O WhatsApp precisa ter DDD + número, ex.: (11) 99999-9999.'); this.classList.add('falta'); } };
-  $('j-whats').onblur = function () { if (this.value.trim() && !whatsLimpo(this.value)) { $('j-erro').textContent = 'O WhatsApp precisa ter DDD + número, ex.: (11) 99999-9999.'; this.classList.add('falta'); } };
+  $('f-whats').onblur = function () { var c = conferirWhats(this.value); if (this.value.trim() && !c.num) { erro(c.motivo); this.classList.add('falta'); } };
+  $('j-whats').onblur = function () { var c = conferirWhats(this.value); if (this.value.trim() && !c.num) { $('j-erro').textContent = c.motivo; this.classList.add('falta'); } };
   (function () { var c = lembrado(); $('f-nome').value = c.nome || ''; $('f-whats').value = c.whats || ''; })();
 
   // Bebidas saíram do formulário (Leonardo, 24/10): a pergunta das bebidas é a da Qualificação, igual para todos.
@@ -678,7 +707,7 @@
       dados.pedido = 'de sugestões de cruzeiro entre ' + diaMes(dataBr(ini)) + ' e ' + diaMes(dataBr(ate));
     }
     if (nome.length < 2) { erro('Escreva seu nome para a gente te atender.', $('f-nome')); return; }
-    if (!whats) { erro('Escreva seu WhatsApp com DDD.', $('f-whats')); return; }
+    if (!whats) { erro(conferirWhats($('f-whats').value).motivo, $('f-whats')); return; }
     $('f-erro').textContent = '';
     lembrar(nome, $('f-whats').value.trim());
     var botao = this;
