@@ -467,6 +467,13 @@
   // Nome e WhatsApp lembrados no navegador do cliente, para não digitar de novo no formulário ou em outro cartão.
   function lembrar(nome, whats) { try { localStorage.setItem('bf-contato', JSON.stringify({ nome: nome, whats: whats })); } catch (e) {} }
   function lembrado() { try { return JSON.parse(localStorage.getItem('bf-contato')) || {}; } catch (e) { return {}; } }
+  // Nome com pelo menos 2 letras ("12" ou ".." não passam; Leonardo, 01/11).
+  function nomeOk(nome) { return (nome.match(/[a-zà-öø-ÿ]/gi) || []).length >= 2; }
+  // Mesmo pedido (mesmo WhatsApp e mesmo cruzeiro ou período) não vai duas vezes ao Entur: abriria um 2º negócio (Leonardo, 01/11).
+  // Fica no navegador do cliente; outro cruzeiro ou outro número envia normal.
+  function chavePedido(whats, pedido) { return whats + '|' + pedido; }
+  function jaEnviado(ch) { try { return (JSON.parse(localStorage.getItem('bf-enviados')) || []).indexOf(ch) >= 0; } catch (e) { return false; } }
+  function marcarEnviado(ch) { try { var l = JSON.parse(localStorage.getItem('bf-enviados')) || []; l.push(ch); localStorage.setItem('bf-enviados', JSON.stringify(l.slice(-30))); } catch (e) {} }
 
   function contagem() {
     var falta = FIM_BLACK_NOVEMBER - Date.now();
@@ -545,18 +552,23 @@
   $('j-enviar').onclick = function () {
     var nome = $('j-nome').value.trim(), whats = whatsLimpo($('j-whats').value), s = escolhida.s;
     function falta(msg, campo) { $('j-erro').textContent = msg; campo.classList.add('falta'); campo.focus(); }
-    if (nome.length < 2) return falta('Escreva seu nome para a gente te atender.', $('j-nome'));
+    if (!nomeOk(nome)) return falta('Escreva seu nome para a gente te atender.', $('j-nome'));
     if (!whats) return falta(conferirWhats($('j-whats').value).motivo, $('j-whats'));
     lembrar(nome, $('j-whats').value.trim());
     var ida = dataBr(s.data), fim = dataBr(volta(s)), nomeCabine = NOME_CABINE[escolhida.cabine], botao = this;
+    var pedido = 'do ' + s.navio + ', de ' + diaMes(ida) + ' a ' + diaMes(fim) + ', cabine ' + nomeCabine.toLowerCase(), ch = chavePedido(whats, pedido);
+    function pronto() {
+      $('j-pronto').innerHTML = textoPronto(nome, whats);
+      $('j-pedido').classList.add('oculto');
+      $('j-pronto').classList.remove('oculto');
+    }
+    if (jaEnviado(ch)) return pronto();
     enviando(botao, true);
     gravarNoEntur({ nome: nome, whatsapp: whats, origem: 'Quero esse', navio: s.navio,
-      saida: ida + ' a ' + fim + ', ' + s.noites + ' noites', cabine: nomeCabine, pessoas: '2',
-      pedido: 'do ' + s.navio + ', de ' + diaMes(ida) + ' a ' + diaMes(fim) + ', cabine ' + nomeCabine.toLowerCase() })
+      saida: ida + ' a ' + fim + ', ' + s.noites + ' noites', cabine: nomeCabine, pessoas: '2', pedido: pedido })
       .then(function () {
-        $('j-pronto').innerHTML = textoPronto(nome, whats);
-        $('j-pedido').classList.add('oculto');
-        $('j-pronto').classList.remove('oculto');
+        marcarEnviado(ch);
+        pronto();
       })
       .catch(function () { $('j-erro').textContent = 'Não conseguimos enviar agora. Tente de novo em instantes.'; })
       .then(function () { enviando(botao, false); });
@@ -706,18 +718,20 @@
       dados.tipo = $('f-tipo').value;
       dados.pedido = 'de sugestões de cruzeiro entre ' + diaMes(dataBr(ini)) + ' e ' + diaMes(dataBr(ate));
     }
-    if (nome.length < 2) { erro('Escreva seu nome para a gente te atender.', $('f-nome')); return; }
+    if (!nomeOk(nome)) { erro('Escreva seu nome para a gente te atender.', $('f-nome')); return; }
     if (!whats) { erro(conferirWhats($('f-whats').value).motivo, $('f-whats')); return; }
     $('f-erro').textContent = '';
     lembrar(nome, $('f-whats').value.trim());
-    var botao = this;
+    var botao = this, ch = chavePedido(whats, dados.pedido);
+    function pronto() {
+      $('f-pronto').innerHTML = textoPronto(nome, whats);
+      document.querySelector('.pesquisa .form').classList.add('oculto');
+      $('f-pronto').classList.remove('oculto');
+    }
+    if (jaEnviado(ch)) return pronto();
     enviando(botao, true);
     gravarNoEntur(dados)
-      .then(function () {
-        $('f-pronto').innerHTML = textoPronto(nome, whats);
-        document.querySelector('.pesquisa .form').classList.add('oculto');
-        $('f-pronto').classList.remove('oculto');
-      })
+      .then(function () { marcarEnviado(ch); pronto(); })
       .catch(function () { erro('Não conseguimos enviar agora. Tente de novo em instantes.'); })
       .then(function () { enviando(botao, false); });
   };
