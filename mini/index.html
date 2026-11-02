@@ -565,7 +565,7 @@
     if (jaEnviado(ch)) return pronto();
     enviando(botao, true);
     gravarNoEntur({ nome: nome, whatsapp: whats, origem: 'Quero esse', navio: s.navio,
-      saida: ida + ' a ' + fim + ', ' + s.noites + ' noites', cabine: nomeCabine, pessoas: '2', pedido: pedido })
+      saida: ida + ' a ' + fim + ', ' + s.noites + ' noites', cabine: nomeCabine, pessoas: '2', pedido: pedido, ida: ida, volta: fim })
       .then(function () {
         marcarEnviado(ch);
         pronto();
@@ -706,6 +706,7 @@
       dados.origem = 'Já sei o cruzeiro';
       dados.navio = $('f-navio').value;
       dados.saida = ida + ' a ' + fim + ', ' + s.noites + ' noites';
+      dados.ida = ida; dados.volta = fim;   // datas soltas (dd/mm/aaaa) para a abertura com resumo do Entur, que refaz cada uma como data (Leonardo, 02/11)
       dados.pedido = 'do ' + dados.navio + ', de ' + diaMes(ida) + ' a ' + diaMes(fim) + comCabine;
     } else {
       var ini = $('f-inicio').value, ate = $('f-fim').value;
@@ -715,6 +716,7 @@
       if (ate <= ini) { erro('A data de volta precisa ser depois da data de ida.', $('f-fim')); return; }
       dados.origem = 'Quero sugestões';
       dados.periodo = dataBr(ini) + ' a ' + dataBr(ate);
+      dados.ida = dataBr(ini); dados.volta = dataBr(ate);
       dados.tipo = $('f-tipo').value;
       dados.pedido = 'de sugestões de cruzeiro entre ' + diaMes(dataBr(ini)) + ' e ' + diaMes(dataBr(ate));
     }
