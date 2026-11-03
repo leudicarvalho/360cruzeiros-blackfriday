@@ -115,7 +115,7 @@
   @keyframes seta { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
   @media (prefers-reduced-motion: reduce) { .dica .seta { animation: none; } }
   section.pesquisa h2 em { color: var(--ouro); }
-  section.pesquisa .form { margin: 0 auto; text-align: left; background: var(--card); }
+  section.pesquisa .btn { max-width: 360px; margin: 16px auto 0; font-size: 16px; padding: 14px; }
   section .card .data { color: var(--cor); }
 
   /* Celular: cartões em carrossel (arrasta para o lado), para a página não ficar comprida demais. */
@@ -320,69 +320,17 @@
   </section>
 
   <section class="pesquisa">
-    <span class="rotulo">Pesquisa pelo WhatsApp</span>
-    <h2>Quer comparar <em>outro cruzeiro?</em></h2>
-    <p class="explica"><b class="santos">Só cruzeiros que saem de Santos e voltam para Santos.</b> Conte o que você procura. A gente confere o preço e te responde no WhatsApp.</p>
-    <div class="form">
-      <div class="abas" id="abas">
-        <button data-a="sei" class="ativo">Já sei o cruzeiro</button>
-        <button data-a="sugestao">Quero sugestões</button>
-      </div>
-      <div class="troca">
-      <div class="campos sei" id="campos-sei">
-        <label>Navio<select id="f-navio"></select></label>
-        <label>Data de saída<select id="f-data"></select></label>
-      </div>
-      <div class="campos sug oculto" id="campos-sugestao">
-        <label>Posso viajar a partir de<input type="date" id="f-inicio" max="2027-04-30"></label>
-        <label>Preciso voltar até<input type="date" id="f-fim" max="2027-04-30"></label>
-        <label>Tipo de cruzeiro<select id="f-tipo">
-          <option>Mini cruzeiro (3 e 4 noites)</option><option>Cruzeiro maior (5 noites ou mais)</option>
-        </select></label>
-      </div>
-      </div>
-      <div class="campos duo">
-        <label>Quantas pessoas<select id="f-pessoas">
-          <option>1</option><option selected>2</option><option>3</option><option>4</option><option>5 ou mais</option>
-        </select></label>
-        <label>Cabine<select id="f-cabine">
-          <option>Interna</option><option>Externa</option><option>Varanda</option><option>Ainda não sei</option>
-        </select></label>
-      </div>
-      <div class="campos contato">
-        <label>Seu nome<input type="text" id="f-nome" placeholder="Como você se chama?" autocomplete="name"></label>
-        <label>WhatsApp com DDD<input type="tel" id="f-whats" placeholder="(11) 99999-9999" autocomplete="tel"></label>
-      </div>
-      <button class="btn" id="f-enviar">Quero receber o preço</button>
-      <div class="msg-form"><p class="erro" id="f-erro"></p><p class="nota">Preço sem pacote de bebidas. No WhatsApp a gente te mostra como fica com bebidas.</p></div>
-    </div>
-    <div class="form pronto oculto" id="f-pronto"></div>
+    <span class="rotulo">Atendimento pelo WhatsApp</span>
+    <h2>Não achou a data que você pode? <em>Me chama no WhatsApp</em></h2>
+    <p class="explica"><b class="santos">Só cruzeiros que saem de Santos e voltam para Santos.</b> Me conta quando você pode viajar e quantas pessoas vão, que eu procuro as saídas mais em conta para você.</p>
+    <a class="btn" id="chamar" href="#" target="_blank" rel="noopener">Chamar no WhatsApp</a>
   </section>
 
   <p class="rodape">Preços do dia para 2 adultos, com taxas, na categoria mais em conta de cada tipo de cabine. Sujeitos a disponibilidade e confirmados no atendimento.<br>360cruzeiros</p>
 </div>
 
-<div class="fundo-janela oculto" id="j-fundo"></div>
-<div class="janela oculto" id="janela" role="dialog" aria-modal="true" aria-labelledby="j-titulo">
-  <button class="fechar" id="j-fechar" aria-label="Fechar">×</button>
-  <div id="j-pedido">
-    <h3 id="j-titulo">Quero esse cruzeiro</h3>
-    <p class="resumo" id="j-resumo"></p>
-    <label>Seu nome<input type="text" id="j-nome" placeholder="Como você se chama?" autocomplete="name"></label>
-    <label>WhatsApp com DDD<input type="tel" id="j-whats" placeholder="(11) 99999-9999" autocomplete="tel"></label>
-    <p class="erro" id="j-erro"></p>
-    <button class="btn" id="j-enviar">Quero receber o preço</button>
-    <p class="nota">Preço sem pacote de bebidas. No WhatsApp a gente te mostra como fica com bebidas.</p>
-  </div>
-  <div class="pronto oculto" id="j-pronto"></div>
-</div>
-
 <script>
 (function () {
-  // Automação "Black November: dados do site" no Entur Marketing (24/10): grava o contato e os campos BF,
-  // manda a mensagem de boas-vindas no WhatsApp e cria o negócio na Qualificação Personalizado (que manda a
-  // pergunta das bebidas). O site não abre mais o WhatsApp: a gente chama o cliente. Manual: docs/conversas/passagem_blackfriday.md.
-  var ENTUR = 'https://mkt.enturos.com/api/automations/hooks/Vz-Ua5VksoQLtMwkyfx7ngMu';
   // Páginas do anúncio de novembro (Lead Ads, Leonardo 26/10): mini/ e longo/ são cópias desta página
   // (blackfriday/montar-modos.ps1) e mostram só aquele tipo de cruzeiro; a raiz mostra tudo.
   var MODO = /\/mini\/(index\.html)?$/.test(location.pathname) ? 'mini' : /\/longo\/(index\.html)?$/.test(location.pathname) ? 'longo' : '';
@@ -435,45 +383,11 @@
     var r = d.slice(2), corte = r.length > 8 ? 5 : 4;
     return '(' + d.slice(0, 2) + ') ' + (r.length > 4 ? r.slice(0, corte) + '-' + r.slice(corte) : r);
   }
-  ['f-whats', 'j-whats'].forEach(function (id) {
-    var el = document.getElementById(id);
-    el.addEventListener('input', function (ev) {
-      if (!/^insert/.test(ev.inputType || '') || this.selectionStart !== this.value.length || /^\s*\+/.test(this.value)) return;
-      this.value = mascaraWhats(this.value.replace(/\D/g, ''));
-    });
-    // Ao sair do campo, número certo fica no formato padrão (inclusive quem digitou +55 ou sem o 9).
-    el.addEventListener('blur', function () { var n = whatsLimpo(this.value); if (n) this.value = mascaraWhats(n.slice(2)); });
-  });
-  // Manda os dados ao Entur e espera a confirmação ({ok: true}). Campo vazio não vai (o Entur dá erro com e-mail "" repetido).
-  // "pedido" é o trecho da mensagem de boas-vindas ("Recebi seu pedido <pedido>.").
-  function gravarNoEntur(dados) {
-    var limpo = { tag: 'black_friday' };
-    for (var k in dados) if (dados[k]) limpo[k] = dados[k];
-    // Sem resposta em 20 s = erro (o cliente vê "tente de novo" em vez de ficar esperando).
-    var corte = window.AbortController ? new AbortController() : null;
-    if (corte) setTimeout(function () { corte.abort(); }, 20000);
-    return fetch(ENTUR, { method: 'POST', body: JSON.stringify(limpo), headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, signal: corte ? corte.signal : undefined })
-      .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j.ok) throw new Error(j.error || 'erro'); });
-  }
+  // WhatsApp do Leonardo (03/11, depois da restrição de 02/11): o cliente escreve primeiro, com a mensagem já pronta.
+  // O site não grava mais nada no Entur; a Fila lê a mensagem e responde. Manual: docs/conversas/passagem_blackfriday.md.
+  var WHATS = '5582993258783';
+  function linkWhats(texto) { return 'https://wa.me/' + WHATS + '?text=' + encodeURIComponent(texto); }
   function diaMes(br) { return br.slice(0, 5); }   // "23/11/2026" -> "23/11"
-  function textoPronto(nome, whats) {
-    var d = whats.slice(2), num = '(' + d.slice(0, 2) + ') ' + d.slice(2, -4) + '-' + d.slice(-4);
-    return '<h3>Pronto, ' + esc(nome.split(' ')[0]) + '!</h3>' +
-      '<p>Vamos te chamar no WhatsApp <b>' + num + '</b> em poucos minutos.</p>' +
-      '<p>Lá a gente confere o preço atualizado e te mostra como fica com pacote de bebidas.</p>';
-  }
-  function enviando(botao, sim) { botao.disabled = sim; botao.textContent = sim ? 'Enviando...' : 'Quero receber o preço'; }
-  // Nome e WhatsApp lembrados no navegador do cliente, para não digitar de novo no formulário ou em outro cartão.
-  function lembrar(nome, whats) { try { localStorage.setItem('bf-contato', JSON.stringify({ nome: nome, whats: whats })); } catch (e) {} }
-  function lembrado() { try { return JSON.parse(localStorage.getItem('bf-contato')) || {}; } catch (e) { return {}; } }
-  // Nome com pelo menos 2 letras ("12" ou ".." não passam; Leonardo, 01/11).
-  function nomeOk(nome) { return (nome.match(/[a-zà-öø-ÿ]/gi) || []).length >= 2; }
-  // Mesmo pedido (mesmo WhatsApp e mesmo cruzeiro ou período) não vai duas vezes ao Entur: abriria um 2º negócio (Leonardo, 01/11).
-  // Fica no navegador do cliente; outro cruzeiro ou outro número envia normal.
-  function chavePedido(whats, pedido) { return whats + '|' + pedido; }
-  function jaEnviado(ch) { try { return (JSON.parse(localStorage.getItem('bf-enviados')) || []).indexOf(ch) >= 0; } catch (e) { return false; } }
-  function marcarEnviado(ch) { try { var l = JSON.parse(localStorage.getItem('bf-enviados')) || []; l.push(ch); localStorage.setItem('bf-enviados', JSON.stringify(l.slice(-30))); } catch (e) {} }
 
   function contagem() {
     var falta = FIM_BLACK_NOVEMBER - Date.now();
@@ -519,61 +433,13 @@
       '</div></div>';
   }
 
-  // "Quero esse" abre a janelinha (nome e WhatsApp); a cabine é a escolhida no topo na hora do clique.
-  var escolhida = null;
+  // "Quero esse" abre o WhatsApp com o pedido escrito (navio, datas, cabine escolhida no topo e o preço de hoje para 2).
   document.addEventListener('click', function (ev) {
     var b = ev.target.closest && ev.target.closest('.quero'); if (!b) return;
     var s = saidas[+b.dataset.s];
-    escolhida = { s: s, cabine: cabine, preco: s.atual[cabine] };
-    $('j-resumo').innerHTML = '<b>' + esc(s.navio) + '</b>, ' + dataBr(s.data) + ' a ' + dataBr(volta(s)) + ', ' + s.noites +
-      ' noites<br>Cabine ' + NOME_CABINE[cabine] + ': ' + reais(escolhida.preco) + ' para 2 pessoas';
-    var c = lembrado();
-    $('j-nome').value = $('j-nome').value || c.nome || '';
-    $('j-whats').value = $('j-whats').value || c.whats || '';
-    $('j-erro').textContent = '';
-    $('j-pedido').classList.remove('oculto');
-    $('j-pronto').classList.add('oculto');
-    // Abre na altura do cartão clicado (no Wix a página inteira fica num quadro alto).
-    var topo = b.getBoundingClientRect().top + window.pageYOffset;
-    $('j-fundo').style.height = document.documentElement.scrollHeight + 'px';
-    $('janela').style.top = Math.max(16, topo - 220) + 'px';
-    $('j-fundo').classList.remove('oculto');
-    $('janela').classList.remove('oculto');
-    // No celular não abre o teclado sozinho: ele cobria o navio, a data e o preço da janelinha (Leonardo, 01/11).
-    // O cliente lê o pedido e toca no campo quando quiser; no computador o cursor já vai para o nome.
-    if (!matchMedia('(pointer: coarse)').matches) $('j-nome').focus({ preventScroll: true });
+    window.open(linkWhats('Oi, Leonardo! Quero esse cruzeiro da Black November: ' + s.navio + ', de ' + diaMes(dataBr(s.data)) + ' a ' +
+      diaMes(dataBr(volta(s))) + ', ' + s.noites + ' noites, cabine ' + NOME_CABINE[cabine].toLowerCase() + ' (' + reais(s.atual[cabine]) + ' para 2 pessoas no site).'), '_blank');
   });
-  function fecharJanela() { $('janela').classList.add('oculto'); $('j-fundo').classList.add('oculto'); }
-  $('j-fechar').onclick = fecharJanela;
-  $('j-fundo').onclick = fecharJanela;
-  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') fecharJanela(); });
-  ['j-nome', 'j-whats'].forEach(function (id) { $(id).oninput = function () { this.classList.remove('falta'); $('j-erro').textContent = ''; }; });
-
-  $('j-enviar').onclick = function () {
-    var nome = $('j-nome').value.trim(), whats = whatsLimpo($('j-whats').value), s = escolhida.s;
-    function falta(msg, campo) { $('j-erro').textContent = msg; campo.classList.add('falta'); campo.focus(); }
-    if (!nomeOk(nome)) return falta('Escreva seu nome para a gente te atender.', $('j-nome'));
-    if (!whats) return falta(conferirWhats($('j-whats').value).motivo, $('j-whats'));
-    lembrar(nome, $('j-whats').value.trim());
-    var ida = dataBr(s.data), fim = dataBr(volta(s)), nomeCabine = NOME_CABINE[escolhida.cabine], botao = this;
-    var pedido = 'do ' + s.navio + ', de ' + diaMes(ida) + ' a ' + diaMes(fim) + ', cabine ' + nomeCabine.toLowerCase(), ch = chavePedido(whats, pedido);
-    function pronto() {
-      $('j-pronto').innerHTML = textoPronto(nome, whats);
-      $('j-pedido').classList.add('oculto');
-      $('j-pronto').classList.remove('oculto');
-    }
-    if (jaEnviado(ch)) return pronto();
-    enviando(botao, true);
-    gravarNoEntur({ nome: nome, whatsapp: whats, origem: 'Quero esse', navio: s.navio,
-      saida: ida + ' a ' + fim + ', ' + s.noites + ' noites', cabine: nomeCabine, pessoas: '2', pedido: pedido, ida: ida, volta: fim })
-      .then(function () {
-        marcarEnviado(ch);
-        pronto();
-      })
-      .catch(function () { $('j-erro').textContent = 'Não conseguimos enviar agora. Tente de novo em instantes.'; })
-      .then(function () { enviando(botao, false); });
-  };
-
   function vazio() {
     return '<div class="vazio">' + (cias.length ? 'Nenhuma saída desta seleção nesta cabine hoje.' : 'Sem preços nesta cabine hoje.') + '</div>';
   }
@@ -600,29 +466,6 @@
       .sort(function (a, b) { return queda(b) - queda(a) || a.atual[cabine] - b.atual[cabine]; }).slice(0, 5);
     $('quedas').innerHTML = quedas.map(function (s, k) { return card(s, k + 1, true); }).join('') ||
       vazio();
-  }
-
-  function preencherNavios() {
-    var hoje = hojeIso(), porNavio = {};
-    saidas.forEach(function (s) { if (s.data > hoje && s.data <= ULTIMA_SAIDA && doModo(s)) (porNavio[s.navio] = porNavio[s.navio] || []).push(s); });
-    // MSC e Costa primeiro; os temáticos da Promoação no fim da lista.
-    var nomes = Object.keys(porNavio).sort(function (a, b) {
-      return porNavio[a][0].tematico - porNavio[b][0].tematico || a.localeCompare(b, 'pt-BR');
-    });
-    // Navio e data começam vazios, para o cliente escolher; a data só libera depois do navio (Leonardo, 25/10).
-    $('f-navio').innerHTML = '<option value="" selected disabled>Selecione o navio</option>' +
-      nomes.map(function (n) { return '<option>' + esc(n) + '</option>'; }).join('');
-    function datas() {
-      var l = porNavio[$('f-navio').value] || [];
-      $('f-data').disabled = !l.length;
-      $('f-data').innerHTML = '<option value="" selected disabled>' + (l.length ? 'Selecione a data' : 'Escolha o navio primeiro') + '</option>' +
-        l.map(function (s) {
-          return '<option value="' + s.data + '|' + s.noites + '">' + dataBr(s.data).slice(0, 5) + ' a ' + dataBr(volta(s)) + ' · ' + s.noites + ' noites · ' + esc(roteiro(s)) + '</option>';
-        }).join('');
-    }
-    $('f-navio').onchange = function () { this.classList.remove('falta'); $('f-erro').textContent = ''; datas(); };
-    $('f-data').onchange = function () { this.classList.remove('falta'); $('f-erro').textContent = ''; };
-    datas();
   }
 
   // Filtro repetido em cada bloco, sempre igual nos 3: mudar um muda todos (Leonardo, 23/10).
@@ -658,90 +501,11 @@
     [].forEach.call(document.querySelectorAll('.grade'), function (g) { g.classList.remove('trocou'); void g.offsetWidth; g.classList.add('trocou'); });
   };
 
-  var aba = 'sei';
-  $('abas').onclick = function (ev) {
-    var b = ev.target.closest('button'); if (!b) return;
-    aba = b.dataset.a;
-    [].forEach.call(this.children, function (x) { x.classList.toggle('ativo', x === b); });
-    $('campos-sei').classList.toggle('oculto', aba !== 'sei');
-    $('campos-sugestao').classList.toggle('oculto', aba === 'sei');
-  };
-
-  function erro(msg, campo) {
-    $('f-erro').textContent = msg;
-    if (campo) { campo.classList.add('falta'); campo.focus(); }
-  }
-  ['f-nome', 'f-whats', 'f-inicio', 'f-fim'].forEach(function (id) { $(id).oninput = function () { this.classList.remove('falta'); $('f-erro').textContent = ''; }; });
-
-  // Datas das sugestões: só de hoje até a última saída da página; data inválida ou fora disso fica em vermelho com o motivo.
-  function problemaData(el, nome) {
-    if (el.validity && el.validity.badInput) return 'A data em "' + nome + '" não existe. Confira o dia e o mês.';
-    if (!el.value) return 'Preencha "' + nome + '".';
-    if (el.value < hojeIso()) return 'A data em "' + nome + '" já passou. Escolha um dia a partir de hoje.';
-    if (el.value > ULTIMA_SAIDA) return 'A data em "' + nome + '" precisa ser até ' + dataBr(ULTIMA_SAIDA) + '.';
-    return '';
-  }
-  $('f-inicio').min = $('f-fim').min = hojeIso();
-  [['f-inicio', 'Posso viajar a partir de'], ['f-fim', 'Preciso voltar até']].forEach(function (c) {
-    $(c[0]).onchange = $(c[0]).onblur = function () {
-      var p = (this.value || (this.validity && this.validity.badInput)) ? problemaData(this, c[1]) : '';
-      if (p) erro(p, null), this.classList.add('falta'); else this.classList.remove('falta');
-    };
-  });
-  // WhatsApp: avisa ao sair do campo, sem esperar o envio. E-mail saiu do formulário (Leonardo, 01/11): só nome e WhatsApp, igual ao "Quero esse".
-  $('f-whats').onblur = function () { var c = conferirWhats(this.value); if (this.value.trim() && !c.num) { erro(c.motivo); this.classList.add('falta'); } };
-  $('j-whats').onblur = function () { var c = conferirWhats(this.value); if (this.value.trim() && !c.num) { $('j-erro').textContent = c.motivo; this.classList.add('falta'); } };
-  (function () { var c = lembrado(); $('f-nome').value = c.nome || ''; $('f-whats').value = c.whats || ''; })();
-
-  // Bebidas saíram do formulário (Leonardo, 24/10): a pergunta das bebidas é a da Qualificação, igual para todos.
-  $('f-enviar').onclick = function () {
-    var nome = $('f-nome').value.trim(), whats = whatsLimpo($('f-whats').value);
-    var cab = $('f-cabine').value, comCabine = cab === 'Ainda não sei' ? '' : ', cabine ' + cab.toLowerCase();
-    var dados = { nome: nome, whatsapp: whats, cabine: cab, pessoas: $('f-pessoas').value };
-    if (aba === 'sei') {
-      var d = ($('f-data').value || '|').split('|');
-      if (!$('f-navio').value) { erro('Escolha o navio.', $('f-navio')); return; }
-      if (!d[0]) { erro('Escolha a data de saída.', $('f-data')); return; }
-      var s = { data: d[0], noites: +d[1] }, ida = dataBr(s.data), fim = dataBr(volta(s));
-      dados.origem = 'Já sei o cruzeiro';
-      dados.navio = $('f-navio').value;
-      dados.saida = ida + ' a ' + fim + ', ' + s.noites + ' noites';
-      dados.ida = ida; dados.volta = fim;   // datas soltas (dd/mm/aaaa) para a abertura com resumo do Entur, que refaz cada uma como data (Leonardo, 02/11)
-      dados.pedido = 'do ' + dados.navio + ', de ' + diaMes(ida) + ' a ' + diaMes(fim) + comCabine;
-    } else {
-      var ini = $('f-inicio').value, ate = $('f-fim').value;
-      var pIni = problemaData($('f-inicio'), 'Posso viajar a partir de'), pFim = problemaData($('f-fim'), 'Preciso voltar até');
-      if (pIni) { erro(pIni, $('f-inicio')); return; }
-      if (pFim) { erro(pFim, $('f-fim')); return; }
-      if (ate <= ini) { erro('A data de volta precisa ser depois da data de ida.', $('f-fim')); return; }
-      dados.origem = 'Quero sugestões';
-      dados.periodo = dataBr(ini) + ' a ' + dataBr(ate);
-      dados.ida = dataBr(ini); dados.volta = dataBr(ate);
-      dados.tipo = $('f-tipo').value;
-      dados.pedido = 'de sugestões de cruzeiro entre ' + diaMes(dataBr(ini)) + ' e ' + diaMes(dataBr(ate));
-    }
-    if (!nomeOk(nome)) { erro('Escreva seu nome para a gente te atender.', $('f-nome')); return; }
-    if (!whats) { erro(conferirWhats($('f-whats').value).motivo, $('f-whats')); return; }
-    $('f-erro').textContent = '';
-    lembrar(nome, $('f-whats').value.trim());
-    var botao = this, ch = chavePedido(whats, dados.pedido);
-    function pronto() {
-      $('f-pronto').innerHTML = textoPronto(nome, whats);
-      document.querySelector('.pesquisa .form').classList.add('oculto');
-      $('f-pronto').classList.remove('oculto');
-    }
-    if (jaEnviado(ch)) return pronto();
-    enviando(botao, true);
-    gravarNoEntur(dados)
-      .then(function () { marcarEnviado(ch); pronto(); })
-      .catch(function () { erro('Não conseguimos enviar agora. Tente de novo em instantes.'); })
-      .then(function () { enviando(botao, false); });
-  };
+  $('chamar').href = linkWhats('Oi, Leonardo! Vi o site da Black November e não achei a data que eu posso. Pode me ajudar?');
 
   // Página de um tipo só: esconde o bloco do outro tipo e já marca o tipo nas sugestões.
   if (MODO) {
     document.querySelector(MODO === 'mini' ? 'section.longos' : 'section.mini').classList.add('oculto');
-    $('f-tipo').selectedIndex = MODO === 'mini' ? 0 : 1;
     $('duracao').classList.add('oculto');   // as quedas já vêm só do tipo da página
   }
 
@@ -777,7 +541,6 @@
     $('atualizado').innerHTML = 'Preços atualizados em <b>' + a.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' às ' +
       a.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '</b>';
     desenhar();
-    preencherNavios();
     mostrarArraste();
   }).catch(function () {
     $('atualizado').textContent = 'Não conseguimos carregar os preços agora. Fale com a gente pelo WhatsApp.';
